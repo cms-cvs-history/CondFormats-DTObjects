@@ -1,0 +1,18 @@
+<use name=clhep>
+<use name=FWCore/ParameterSet>
+<use name=CondFormats/DTObjects>
+<use name=CondCore/DBCommon>
+<use name=CondCore/IOVService>
+<use name=CondCore/MetaDataService>
+<use name=CondCore/ESSources>
+<use name=FWCore/Framework>	
+<use name=CondFormats/DataRecord>
+<use name=DataFormats/MuonDetId>
+<use name=FWCore/Services>
+<bin file=testWriteDTMap.cpp></bin>
+<bin file=testReadDTMap.cpp></bin>
+<bin file=testWriteDTT0.cpp></bin>
+<bin file=testReadDTT0.cpp></bin>
+<library file=stubs/DTMapPrint.cc name=DTMapPrint>
+        <flags SEAL_PLUGIN_NAME="DTMapPrint">
+</library>
