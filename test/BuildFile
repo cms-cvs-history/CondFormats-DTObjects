@@ -16,3 +16,6 @@
 <library file=stubs/DTMapPrint.cc name=DTMapPrint>
         <flags SEAL_PLUGIN_NAME="DTMapPrint">
 </library>
+<library file=stubs/DTT0Print.cc name=DTT0Print>
+        <flags SEAL_PLUGIN_NAME="DTT0Print">
+</library>

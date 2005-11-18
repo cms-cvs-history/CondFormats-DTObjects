@@ -79,7 +79,6 @@ int main(int csize, char** cline ) {
     int robId     = 3;
     int tdcId     = 0;
     int channelId = 29;
-    int found = 0;
     ro_map->readOutToGeometry(     dduId,
                                    rosId,
                                    robId,
