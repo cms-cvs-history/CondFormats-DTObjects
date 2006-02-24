@@ -10,13 +10,9 @@
 <use name=DataFormats/MuonDetId>
 <use name=FWCore/Services>
 <bin file=testWriteDTMap.cpp></bin>
-<bin file=testReadDTMap.cpp></bin>
 <bin file=testWriteDTT0.cpp></bin>
-<bin file=testReadDTT0.cpp></bin>
 <bin file=testWriteDTTtrig.cpp></bin>
-<bin file=testReadDTTtrig.cpp></bin>
 <bin file=testWriteDTMtime.cpp></bin>
-<bin file=testReadDTMtime.cpp></bin>
 <library file=stubs/DTMapPrint.cc name=DTMapPrint>
         <flags SEAL_PLUGIN_NAME="DTMapPrint">
 </library>

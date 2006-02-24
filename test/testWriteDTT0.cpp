@@ -1,50 +1,99 @@
-#include "CondCore/DBCommon/interface/DBWriter.h"
 #include "CondFormats/DTObjects/interface/DTT0.h"
+
+#include "CondCore/DBCommon/interface/DBWriter.h"
+#include "CondCore/DBCommon/interface/DBSession.h"
+#include "CondCore/DBCommon/interface/Exception.h"
+#include "CondCore/DBCommon/interface/ServiceLoader.h"
+#include "CondCore/DBCommon/interface/ConnectMode.h"
+#include "CondCore/DBCommon/interface/MessageLevel.h"
 #include "CondCore/IOVService/interface/IOV.h"
 #include "CondCore/MetaDataService/interface/MetaData.h"
 #include "FWCore/Framework/interface/IOVSyncValue.h"
-#include "SealKernel/Service.h"
-#include "POOLCore/POOLContext.h"
-#include "SealKernel/Context.h"
 #include <string>
 #include <map>
 #include <iostream>
-int main(){
-//  std::string contact("oracle://devdb");
-   std::string contact("oracle://cms_val_lb.cern.ch/CMS_VAL_DT_POOL_OWNER");
- //std::string contact("oracle://cms_val_lb");
-//  std::string contact("sqlite_file:ecalcalib.db");
-  pool::POOLContext::loadComponent( "SEAL/Services/MessageService" );
-  pool::POOLContext::setMessageVerbosityLevel( seal::Msg::Error );
-//  const std::string userNameEnv = "POOL_AUTH_USER=cms_dt_writer";
-  const std::string userNameEnv = "POOL_AUTH_USER=CMS_VAL_DT_POOL_OWNER";
-  ::putenv( const_cast<char*>( userNameEnv.c_str() ) );
-//  const std::string passwdEnv = "POOL_AUTH_PASSWORD=daqcms";
-  const std::string passwdEnv = "POOL_AUTH_PASSWORD=val_dt_own_1031";
-  ::putenv( const_cast<char*>( passwdEnv.c_str() ) );
+#include <fstream>
 
-  
-  cond::DBWriter w(contact);
-  w.startTransaction();
-  cond::IOV* t0iov=new cond::IOV;
-  std::string t0iovToken=w.write<cond::IOV>(t0iov,"IOV");
-  DTT0* t0 = new DTT0("cmssw_t0");
-    int
-    status = t0->setCellT0( 2,3,4,1,3,42,523,1.2 );
-    std::cout << "insert status: " << status << std::endl;
-    status = t0->setCellT0( 2,3,4,1,3,43,524,1.3 );
-    std::cout << "insert status: " << status << std::endl;
-    status = t0->setCellT0( 2,3,4,1,3,44,525,1.4 );
-    std::cout << "insert status: " << status << std::endl;
-  std::string t0tok=w.write<DTT0>(t0,"DTT0");
-  std::cout<<"endoftime "<<edm::IOVSyncValue::endOfTime().eventID().run()<<std::endl;
-  std::cout << t0tok << std::endl;
-  t0iov->iov.insert(std::make_pair(10, t0tok));
-//  t0iov->iov.insert(std::make_pair(edm::IOVSyncValue::endOfTime().eventID().run(), t0tok));
-  
-  w.commitTransaction();
-  //register the iovToken to the metadata service
-  cond::MetaData metadata_svc(contact);
-  // metadata_svc.addMapping("DTMapping_v1", mapiovToken);  
-  metadata_svc.addMapping("t0_test", t0iovToken);  
+int main(){
+
+  cond::ServiceLoader* loader=new cond::ServiceLoader;
+  ::putenv("CORAL_AUTH_USER=me");
+  ::putenv("CORAL_AUTH_PASSWORD=mypass");
+  loader->loadAuthenticationService( cond::Env );
+  loader->loadMessageService( cond::Error );
+  try{
+    std::cout << "01 " << std::endl;
+    cond::DBSession* session1 =
+          new cond::DBSession( std::string( "sqlite_file:test.db" ) );
+    std::cout << "02  " << std::endl;
+    session1->setCatalog( "file:testcatalog.xml" );
+    std::cout << "03 " << std::endl;
+    session1->connect( cond::ReadWriteCreate );
+    std::cout << "04 " << std::endl;
+    cond::DBWriter pwriter( *session1, "T0s" );
+    std::cout << "05 " << std::endl;
+    cond::DBWriter iovwriter( *session1, "IOV" );
+    std::cout << "06 " << std::endl;
+    session1->startUpdateTransaction();
+    std::cout << "07 " << std::endl;
+    cond::IOV* t0iov = new cond::IOV;
+    std::cout << "08 " << std::endl;
+
+    DTT0* t0 = new DTT0( "cmssw_t0" );
+
+    int status = 0;
+    std::ifstream ifile( "testT0.txt" );
+    int whe;
+    int sta;
+    int sec;
+    int qua;
+    int lay;
+    int cel;
+    int t0m;
+    float rms;
+    while ( ifile >> whe
+                  >> sta
+                  >> sec
+                  >> qua
+                  >> lay
+                  >> cel
+                  >> t0m
+                  >> rms ) {
+      status = t0->setCellT0( whe, sta, sec, qua, lay, cel, t0m, rms );
+      std::cout << whe << " "
+                << sta << " "
+                << sec << " "
+                << qua << " "
+                << lay << " "
+                << cel << " "
+                << t0m << " "
+                << rms << "  -> ";                
+      std::cout << "insert status: " << status << std::endl;
+    }
+
+    std::string mytok=pwriter.markWrite<DTT0>( t0 );
+    t0iov->iov.insert( std::make_pair(
+                edm::IOVSyncValue::endOfTime().eventID().run(), mytok ) );
+
+    std::string t0iovToken = iovwriter.markWrite<cond::IOV>( t0iov );
+    session1->commit();//commit all in one
+    session1->disconnect();
+    delete session1;
+    cond::MetaData metadata_svc( "sqlite_file:test.db", *loader );
+    metadata_svc.connect();
+    metadata_svc.addMapping( "cmssw_T0", t0iovToken );
+    metadata_svc.disconnect();
+  } catch( const cond::Exception& er ) {
+    std::cout << er.what() << std::endl;
+    delete loader;
+    exit(-1);
+  } catch( ... ) {
+    std::cout << "Funny error" << std::endl;
+    delete loader;
+    exit( -1 );
+  }
+
+  delete loader;
+  return 0;
+
 }
