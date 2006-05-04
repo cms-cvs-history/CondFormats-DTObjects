@@ -49,7 +49,7 @@ int main(){
     int qua;
     int lay;
     int cel;
-    int t0m;
+    float t0m;
     float rms;
     while ( ifile >> whe
                   >> sta

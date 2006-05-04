@@ -47,7 +47,7 @@ int main(){
     int sta;
     int sec;
     int qua;
-    int mti;
+    float mti;
     float rms;
     while ( ifile >> whe
                   >> sta

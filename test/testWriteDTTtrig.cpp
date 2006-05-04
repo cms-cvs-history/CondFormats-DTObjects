@@ -47,18 +47,21 @@ int main(){
     int sta;
     int sec;
     int qua;
-    int tri;
+    float tri;
+    float rms;
     while ( ifile >> whe
                   >> sta
                   >> sec
                   >> qua
-                  >> tri ) {
-      status = tTrig->setSLTtrig( whe, sta, sec, qua, tri );
+                  >> tri
+                  >> rms ) {
+      status = tTrig->setSLTtrig( whe, sta, sec, qua, tri, rms );
       std::cout << whe << " "
                 << sta << " "
                 << sec << " "
                 << qua << " "
-                << tri << "  -> ";                
+                << tri << " "
+                << rms << "  -> ";                
       std::cout << "insert status: " << status << std::endl;
     }
 
