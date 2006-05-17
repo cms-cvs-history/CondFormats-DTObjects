@@ -10,6 +10,7 @@
 <use name=DataFormats/MuonDetId>
 <use name=FWCore/Services>
 <bin file=testWriteDTMap.cpp></bin>
+<bin file=testWriteDTRangeT0.cpp></bin>
 <bin file=testWriteDTT0.cpp></bin>
 <bin file=testWriteDTTtrig.cpp></bin>
 <bin file=testWriteDTMtime.cpp></bin>
@@ -18,6 +19,9 @@
 </library>
 <library file=stubs/DTT0Print.cc name=DTT0Print>
         <flags SEAL_PLUGIN_NAME="DTT0Print">
+</library>
+<library file=stubs/DTRangeT0Print.cc name=DTRangeT0Print>
+        <flags SEAL_PLUGIN_NAME="DTRangeT0Print">
 </library>
 <library file=stubs/DTTtrigPrint.cc name=DTTtrigPrint>
         <flags SEAL_PLUGIN_NAME="DTTtrigPrint">
