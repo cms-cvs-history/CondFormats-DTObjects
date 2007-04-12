@@ -10,32 +10,32 @@
 <use name=CondFormats/DataRecord>
 <use name=DataFormats/MuonDetId>
 <library file=stubs/DTMapPrint.cc name=DTMapPrint>
-        <flags SEAL_PLUGIN_NAME="DTMapPrint">
+        <flags EDM_PLUGIN=1>
 </library>
 <library file=stubs/DTMapWrite.cc name=DTMapWrite>
-        <flags SEAL_PLUGIN_NAME="DTMapWrite">
+        <flags EDM_PLUGIN=1>
 </library>
 <library file=stubs/DTT0Print.cc name=DTT0Print>
-        <flags SEAL_PLUGIN_NAME="DTT0Print">
+        <flags EDM_PLUGIN=1>
 </library>
 <library file=stubs/DTT0Write.cc name=DTT0Write>
-        <flags SEAL_PLUGIN_NAME="DTT0Write">
+        <flags EDM_PLUGIN=1>
 </library>
 <library file=stubs/DTRangeT0Print.cc name=DTRangeT0Print>
-        <flags SEAL_PLUGIN_NAME="DTRangeT0Print">
+        <flags EDM_PLUGIN=1>
 </library>
 <library file=stubs/DTRangeT0Write.cc name=DTRangeT0Write>
-        <flags SEAL_PLUGIN_NAME="DTRangeT0Write">
+        <flags EDM_PLUGIN=1>
 </library>
 <library file=stubs/DTTtrigPrint.cc name=DTTtrigPrint>
-        <flags SEAL_PLUGIN_NAME="DTTtrigPrint">
+        <flags EDM_PLUGIN=1>
 </library>
 <library file=stubs/DTTtrigWrite.cc name=DTTtrigWrite>
-        <flags SEAL_PLUGIN_NAME="DTTtrigWrite">
+        <flags EDM_PLUGIN=1>
 </library>
 <library file=stubs/DTMtimePrint.cc name=DTMtimePrint>
-        <flags SEAL_PLUGIN_NAME="DTMtimePrint">
+        <flags EDM_PLUGIN=1>
 </library>
 <library file=stubs/DTMtimeWrite.cc name=DTMtimeWrite>
-        <flags SEAL_PLUGIN_NAME="DTMtimeWrite">
+        <flags EDM_PLUGIN=1>
 </library>
