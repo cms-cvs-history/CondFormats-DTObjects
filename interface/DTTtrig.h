@@ -6,8 +6,8 @@
  *       Class to hold drift tubes TTrigs
  *             ( SL by SL time offsets )
  *
- *  $Date: 2006/05/04 06:54:02 $
- *  $Revision: 1.4 $
+ *  $Date: 2006/07/19 09:32:42 $
+ *  $Revision: 1.5 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -21,6 +21,7 @@
 // Collaborating Class Declarations --
 //------------------------------------
 #include "CondFormats/DTObjects/interface/DTTimeUnits.h"
+#include "DataFormats/MuonDetId/interface/DTWireId.h"
 #include "DataFormats/MuonDetId/interface/DTSuperLayerId.h"
 
 //---------------
@@ -45,6 +46,8 @@ class DTTtrigId   {
   int stationId;
   int  sectorId;
   int      slId;
+  int   layerId;
+  int    cellId;
 
 };
 
@@ -92,7 +95,20 @@ class DTTtrig {
                float&  tTrig,
                float&  tTrms,
                DTTimeUnits::type unit = DTTimeUnits::counts ) const;
+  int slTtrig( int   wheelId,
+               int stationId,
+               int  sectorId,
+               int      slId,
+               int   layerId,
+               int    cellId,
+               float&  tTrig,
+               float&  tTrms,
+               DTTimeUnits::type unit = DTTimeUnits::counts ) const;
   int slTtrig( const DTSuperLayerId& id,
+               float&  tTrig,
+               float&  tTrms,
+               DTTimeUnits::type unit = DTTimeUnits::counts ) const;
+  int slTtrig( const DetId& id,
                float&  tTrig,
                float&  tTrms,
                DTTimeUnits::type unit = DTTimeUnits::counts ) const;
@@ -113,7 +129,20 @@ class DTTtrig {
                   float   tTrig,
                   float   tTrms,
                   DTTimeUnits::type unit = DTTimeUnits::counts );
+  int setSLTtrig( int   wheelId,
+                  int stationId,
+                  int  sectorId,
+                  int      slId,
+                  int   layerId,
+                  int    cellId,
+                  float   tTrig,
+                  float   tTrms,
+                  DTTimeUnits::type unit = DTTimeUnits::counts );
   int setSLTtrig( const DTSuperLayerId& id,
+                  float   tTrig,
+                  float   tTrms,
+                  DTTimeUnits::type unit = DTTimeUnits::counts );
+  int setSLTtrig( const DetId& id,
                   float   tTrig,
                   float   tTrms,
                   DTTimeUnits::type unit = DTTimeUnits::counts );

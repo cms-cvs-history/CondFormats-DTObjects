@@ -6,8 +6,8 @@
  *       Class to hold drift tubes mean-times
  *             ( SL by SL mean-time calculation )
  *
- *  $Date: 2006/05/17 10:33:51 $
- *  $Revision: 1.5 $
+ *  $Date: 2006/07/19 09:32:41 $
+ *  $Revision: 1.6 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -21,6 +21,7 @@
 // Collaborating Class Declarations --
 //------------------------------------
 #include "CondFormats/DTObjects/interface/DTTimeUnits.h"
+#include "DataFormats/MuonDetId/interface/DTWireId.h"
 #include "DataFormats/MuonDetId/interface/DTSuperLayerId.h"
 
 //---------------
@@ -44,6 +45,8 @@ class DTMtimeId {
   int stationId;
   int  sectorId;
   int      slId;
+  int   layerId;
+  int    cellId;
 
 };
 
@@ -91,7 +94,20 @@ class DTMtime {
                float&  mTime,
                float&  mTrms,
                DTTimeUnits::type unit = DTTimeUnits::counts ) const;
+  int slMtime( int   wheelId,
+               int stationId,
+               int  sectorId,
+               int      slId,
+               int   layerId,
+               int    cellId,
+               float&  mTime,
+               float&  mTrms,
+               DTTimeUnits::type unit = DTTimeUnits::counts ) const;
   int slMtime( const DTSuperLayerId& id,
+               float&  mTime,
+               float&  mTrms,
+               DTTimeUnits::type unit = DTTimeUnits::counts ) const;
+  int slMtime( const DetId& id,
                float&  mTime,
                float&  mTrms,
                DTTimeUnits::type unit = DTTimeUnits::counts ) const;
@@ -112,7 +128,20 @@ class DTMtime {
                   float   mTime,
                   float   mTrms,
                   DTTimeUnits::type unit = DTTimeUnits::counts );
+  int setSLMtime( int   wheelId,
+                  int stationId,
+                  int  sectorId,
+                  int      slId,
+                  int   layerId,
+                  int    cellId,
+                  float   mTime,
+                  float   mTrms,
+                  DTTimeUnits::type unit = DTTimeUnits::counts );
   int setSLMtime( const DTSuperLayerId& id,
+                  float   mTime,
+                  float   mTrms,
+                  DTTimeUnits::type unit = DTTimeUnits::counts );
+  int setSLMtime( const DetId& id,
                   float   mTime,
                   float   mTrms,
                   DTTimeUnits::type unit = DTTimeUnits::counts );

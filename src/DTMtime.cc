@@ -46,7 +46,9 @@ DTMtimeId::DTMtimeId() :
     wheelId( 0 ),
   stationId( 0 ),
    sectorId( 0 ),
-       slId( 0 ) {
+       slId( 0 ),
+    layerId( 0 ),
+     cellId( 0 ) {
 }
 
 
@@ -84,6 +86,10 @@ bool DTMtimeCompare::operator()( const DTMtimeId& idl,
   if ( idl. sectorId > idr. sectorId ) return false;
   if ( idl.     slId < idr.     slId ) return true;
   if ( idl.     slId > idr.     slId ) return false;
+  if ( idl.  layerId < idr.  layerId ) return true;
+  if ( idl.  layerId > idr.  layerId ) return false;
+  if ( idl.   cellId < idr.   cellId ) return true;
+  if ( idl.   cellId > idr.   cellId ) return false;
   return false;
 }
 
@@ -96,6 +102,7 @@ int DTMtime::slMtime( int   wheelId,
                       float&  mTrms,
                       DTTimeUnits::type unit ) const {
 
+/*
   mTime = 0.0;
   mTrms = 0.0;
 
@@ -104,6 +111,51 @@ int DTMtime::slMtime( int   wheelId,
   key.stationId = stationId;
   key. sectorId =  sectorId;
   key.     slId =      slId;
+  key.  layerId = 0;
+  key.   cellId = 0;
+  std::map<DTMtimeId,
+           DTMtimeData,
+           DTMtimeCompare>::const_iterator iter = slData.find( key );
+
+  if ( iter != slData.end() ) {
+    const DTMtimeData& data = iter->second;
+    mTime = data.mTime;
+    mTrms = data.mTrms;
+    if ( unit == DTTimeUnits::ns ) {
+      mTime *= nsPerCount;
+      mTrms *= nsPerCount;
+    }
+    return 0;
+  }
+  return 1;
+*/
+  return slMtime( wheelId, stationId, sectorId,
+                     slId,         0,        0,
+                    mTime, mTrms, unit );
+
+}
+
+
+int DTMtime::slMtime( int   wheelId,
+                      int stationId,
+                      int  sectorId,
+                      int      slId,
+                      int   layerId,
+                      int    cellId,
+                      float&  mTime,
+                      float&  mTrms,
+                      DTTimeUnits::type unit ) const {
+
+  mTime = 0.0;
+  mTrms = 0.0;
+
+  DTMtimeId key;
+  key.  wheelId =   wheelId;
+  key.stationId = stationId;
+  key. sectorId =  sectorId;
+  key.     slId =      slId;
+  key.  layerId =   layerId;
+  key.   cellId =    cellId;
   std::map<DTMtimeId,
            DTMtimeData,
            DTMtimeCompare>::const_iterator iter = slData.find( key );
@@ -130,8 +182,34 @@ int DTMtime::slMtime( const DTSuperLayerId& id,
   return slMtime( id.wheel(),
                   id.station(),
                   id.sector(),
-                  id.superLayer(),
+                  id.superLayer(), 0, 0,
                   mTime, mTrms, unit );
+}
+
+
+int DTMtime::slMtime( const DetId& id,
+                      float&  mTime,
+                      float&  mTrms,
+                      DTTimeUnits::type unit ) const {
+  DTWireId wireId( id.rawId() );
+  return slMtime( wireId.wheel(),
+                  wireId.station(),
+                  wireId.sector(),
+                  wireId.superLayer(),
+                  wireId.layer(),
+                  wireId.wire(),
+                  mTime, mTrms, unit );
+/*
+    wheelId = 0;
+  stationId = 0;
+   sectorId = 0;
+       slId = 0;
+    layerId = 0;
+     cellId = 0;
+  return slMtime( wheelId, stationId, sectorId,
+                     slId,   layerId,   cellId,
+                  mTime, mTrms, unit );
+*/
 }
 
 
@@ -165,6 +243,7 @@ int DTMtime::setSLMtime( int   wheelId,
                          float   mTrms,
                          DTTimeUnits::type unit ) {
 
+/*
   if ( unit == DTTimeUnits::ns ) {
     mTime /= nsPerCount;
     mTrms /= nsPerCount;
@@ -175,6 +254,57 @@ int DTMtime::setSLMtime( int   wheelId,
   key.stationId = stationId;
   key. sectorId =  sectorId;
   key.     slId =      slId;
+  key.  layerId = 0;
+  key.   cellId = 0;
+
+  std::map<DTMtimeId,
+           DTMtimeData,
+           DTMtimeCompare>::iterator iter = slData.find( key );
+  if ( iter != slData.end() ) {
+    DTMtimeData& data = iter->second;
+    data.mTime = mTime;
+    data.mTrms = mTrms;
+    return -1;
+  }
+  else {
+    DTMtimeData data;
+    data.mTime = mTime;
+    data.mTrms = mTrms;
+    slData.insert( std::pair<const DTMtimeId,DTMtimeData>( key, data ) );
+    return 0;
+  }
+
+  return 99;
+*/
+  return setSLMtime( wheelId, stationId, sectorId,
+                        slId,         0,        0,
+                       mTime, mTrms, unit );
+
+}
+
+
+int DTMtime::setSLMtime( int   wheelId,
+                         int stationId,
+                         int  sectorId,
+                         int      slId,
+                         int   layerId,
+                         int    cellId,
+                         float   mTime,
+                         float   mTrms,
+                         DTTimeUnits::type unit ) {
+
+  if ( unit == DTTimeUnits::ns ) {
+    mTime /= nsPerCount;
+    mTrms /= nsPerCount;
+  }
+
+  DTMtimeId key;
+  key.  wheelId =   wheelId;
+  key.stationId = stationId;
+  key. sectorId =  sectorId;
+  key.     slId =      slId;
+  key.  layerId =   layerId;
+  key.   cellId =    cellId;
 
   std::map<DTMtimeId,
            DTMtimeData,
@@ -205,8 +335,35 @@ int DTMtime::setSLMtime( const DTSuperLayerId& id,
   return setSLMtime( id.wheel(),
                      id.station(),
                      id.sector(),
-                     id.superLayer(),
+                     id.superLayer(), 0, 0,
                      mTime, mTrms, unit );
+}
+
+
+int DTMtime::setSLMtime( const DetId& id,
+                         float   mTime,
+                         float   mTrms,
+                         DTTimeUnits::type unit ) {
+  DTWireId wireId( id.rawId() );
+  return setSLMtime( wireId.wheel(),
+                     wireId.station(),
+                     wireId.sector(),
+                     wireId.superLayer(),
+                     wireId.layer(),
+                     wireId.wire(),
+                     mTime, mTrms, unit );
+/*
+    wheelId = 0;
+  stationId = 0;
+   sectorId = 0;
+       slId = 0;
+    layerId = 0;
+     cellId = 0;
+  return setSLMtime( wheelId, stationId, sectorId,
+                        slId,   layerId,   cellId,
+                     mTime, mTrms, unit );
+*/
+
 }
 
 void DTMtime::setUnit( float unit ) {
