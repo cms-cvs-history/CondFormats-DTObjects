@@ -5,8 +5,8 @@
  *  Description:
  *
  *
- *  $Date: 2006/02/28 17:28:55 $
- *  $Revision: 1.1 $
+ *  $Date: 2006/05/17 10:33:51 $
+ *  $Revision: 1.2 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -52,6 +52,7 @@ public:
   /// 
   int insert( ElementKey fKey, ElementKey lKey, const Content& cont );
   int find(   ElementKey fKey, ElementKey lKey,       Content& cont );
+  static void setDefault( const Content& def );
 
  private:
 
