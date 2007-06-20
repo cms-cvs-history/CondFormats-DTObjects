@@ -8,6 +8,10 @@
 <use name=FWCore/Framework>	
 <use name=CondFormats/DataRecord>
 <use name=DataFormats/MuonDetId>
+<use name=CondTools/DT>
+<bin file=testWriteDTRef.cpp></bin>
+<bin file=testReadDTRef.cpp></bin>
+<bin file=testCopyDTRef.cpp></bin>
 <library file=stubs/DTMapPrint.cc name=DTMapPrint>
         <flags EDM_PLUGIN=1>
 </library>
@@ -36,5 +40,11 @@
         <flags EDM_PLUGIN=1>
 </library>
 <library file=stubs/DTMtimeWrite.cc name=DTMtimeWrite>
+        <flags EDM_PLUGIN=1>
+</library>
+<library file=stubs/DTConfigPrint.cc name=DTConfigPrint>
+        <flags EDM_PLUGIN=1>
+</library>
+<library file=stubs/DTConfigWrite.cc name=DTConfigWrite>
         <flags EDM_PLUGIN=1>
 </library>
