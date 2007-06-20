@@ -25,6 +25,13 @@
   <class name="DTPerformanceId" id="B0D31E0B-C406-DB11-B446-000E0C5CE283"/>
   <class name="DTPerformanceData" id="9E02CF0B-C406-DB11-A68B-000E0C5CE283"/>
   <class name="DTPerformanceCompare" id="6839502A-C406-DB11-8A55-000E0C5CE283"/>
+  <class name="DTCCBConfig" id="40303F32-EC9F-DB11-B3E2-000E0C5CE283"/>
+  <class name="DTCCBId" id="1433B332-EC9F-DB11-BD6F-000E0C5CE283"/>
+  <class name="DTCCBCompare" id="12F42A6A-EC9F-DB11-8883-000E0C5CE283"/>
+  <class name="DTConfigList" id="9CB14BE8-30A2-DB11-9935-000E0C5CE283"/>
+  <class name="DTConfigData" id="3858CAFE-30A2-DB11-9E86-000E0C5CE283"/>
+  <class name="DTConfigToken" id="4AA88D8D-31A2-DB11-A311-000E0C5CE283"/>
+  <class name="std::basic_string<char>"/>
 
   <class pattern="*map*"/>
   <class pattern="*pair*"/>

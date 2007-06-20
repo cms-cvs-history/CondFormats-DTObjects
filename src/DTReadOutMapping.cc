@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007/01/22 18:24:45 $
- *  $Revision: 1.13 $
+ *  $Date: 2007/03/06 14:30:40 $
+ *  $Revision: 1.14 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -11,12 +11,11 @@
 // This Class' Header --
 //----------------------
 #include "CondFormats/DTObjects/interface/DTReadOutMapping.h"
-#include "CondFormats/DTObjects/interface/DTDataBuffer.h"
 
 //-------------------------------
 // Collaborating Class Headers --
 //-------------------------------
-
+#include "CondFormats/DTObjects/interface/DTDataBuffer.h"
 
 //---------------
 // C++ Headers --

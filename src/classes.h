@@ -5,6 +5,9 @@
 #include "CondFormats/DTObjects/interface/DTRangeT0.h"
 #include "CondFormats/DTObjects/interface/DTStatusFlag.h"
 #include "CondFormats/DTObjects/interface/DTPerformance.h"
+#include "CondFormats/DTObjects/interface/DTCCBConfig.h"
+#include "CondFormats/DTObjects/interface/DTConfigList.h"
+#include "CondFormats/DTObjects/interface/DTConfigData.h"
 
 namespace {
   std::map<DTT0Id,DTT0Data,DTT0Compare> t0Map;
@@ -12,7 +15,11 @@ namespace {
   std::map<DTMtimeId,DTMtimeData,DTMtimeCompare> mTimeMap;
   std::map<DTRangeT0Id,DTRangeT0Data,DTRangeT0Compare> rangeT0Map;
   std::map<DTStatusFlagId,DTStatusFlagData,DTStatusFlagCompare> statusFlagMap;
-  std::map<DTPerformanceId,DTPerformanceData,DTPerformanceCompare> performanceMap;
+  std::map<DTPerformanceId,DTPerformanceData,DTPerformanceCompare>
+       performanceMap;
+//  std::map<DTCCBId,int,DTCCBCompare> ccbData;
+  std::map<DTCCBId,std::vector<int>,DTCCBCompare> ccbData;
+  std::map<int,DTConfigToken> refMap;
 }
 
 /*
