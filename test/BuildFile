@@ -38,3 +38,12 @@
 <library file=stubs/DTMtimeWrite.cc name=DTMtimeWrite>
         <flags EDM_PLUGIN=1>
 </library>
+<library file=stubs/DTDeadPrint.cc name=DTDeadPrint>
+        <flags EDM_PLUGIN=1>
+</library>
+<library file=stubs/DTDeadWrite.cc name=DTDeadWrite>
+        <flags EDM_PLUGIN=1>
+</library>
+<library file=stubs/DTDeadUpdate.cc name=DTDeadUpdate>
+        <flags EDM_PLUGIN=1>
+</library>
