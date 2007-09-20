@@ -5,8 +5,8 @@
  *  Description:
  *       Class to hold configuration identifier for chambers
  *
- *  $Date: 2007-01-09 12:33:52 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/06/20 17:45:30 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -70,8 +70,7 @@ class DTConfigList {
   /// reset content
   void clear();
 
-  int set( int id,
-           const DTConfigToken& token );
+  int set( int id, const DTConfigToken& token );
   /// Access methods to data
   typedef std::map<int,DTConfigToken>::const_iterator const_iterator;
   const_iterator begin() const;

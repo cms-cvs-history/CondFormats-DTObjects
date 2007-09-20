@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007-01-09 12:33:52 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/06/20 17:48:47 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -171,6 +171,18 @@ void DTConfigHandler::getData( int cfgId,
   DTConfigData::link_iterator l_iend = obj->linkEnd();
   while ( l_iter != l_iend ) getData( *l_iter++, list );
   return;
+}
+
+
+int DTConfigHandler::set( int cfgId, const std::string& token ) {
+  getContainer();
+  DTConfigToken configToken;
+  configToken.id = compToken( token );
+  configToken.ref = token;
+  DTConfigList* rs = refSet->ptr();
+  int status = rs->set( cfgId, configToken );
+  refSet->markUpdate();
+  return status;
 }
 
 

@@ -5,8 +5,8 @@
  *  Description:
  *       Class to hold configuration identifier for chambers
  *
- *  $Date: 2007-01-09 12:33:52 $
- *  $Revision: 1.1 $
+ *  $Date: 2007/06/20 17:45:30 $
+ *  $Revision: 1.1.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -58,6 +58,7 @@ class DTConfigHandler {
 
   void getData( int cfgId, std::vector<const std::string*>& list );
 
+  int set( int cfgId, const std::string& token );
   /// Access methods to data
   typedef std::map<int,
                    cond::Ref<DTConfigData>*>::const_iterator const_iterator;
