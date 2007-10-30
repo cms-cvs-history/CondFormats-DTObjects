@@ -6,8 +6,8 @@
  *       Class to hold drift tubes status
  *             ( cell by cell noise and masks )
  *
- *  $Date: 2006/06/12 13:45:12 $
- *  $Revision: 1.2 $
+ *  $Date: 2006/07/19 09:32:41 $
+ *  $Revision: 1.3 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -26,7 +26,8 @@
 // C++ Headers --
 //---------------
 #include <string>
-#include <map>
+#include <vector>
+//#include <map>
 
 //              ---------------------
 //              -- Class Interface --
@@ -100,14 +101,39 @@ class DTStatusFlag {
                   bool&   tdcMask,
                   bool&  trigMask,
                   bool&  deadFlag,
-                  bool&  nohvFlag ) const;
+                  bool&  nohvFlag ) const
+      { return get( wheelId, stationId, sectorId, slId, layerId, cellId,
+                    noiseFlag, feMask, tdcMask, trigMask,
+                    deadFlag, nohvFlag); };
   int cellStatus( const DTWireId& id,
                   bool& noiseFlag,
                   bool&    feMask,
                   bool&   tdcMask,
                   bool&  trigMask,
                   bool&  deadFlag,
-                  bool&  nohvFlag ) const;
+                  bool&  nohvFlag ) const
+      { return get( id,
+                    noiseFlag, feMask, tdcMask, trigMask,
+                    deadFlag, nohvFlag ); };
+  int get( int   wheelId,
+           int stationId,
+           int  sectorId,
+           int      slId,
+           int   layerId,
+           int    cellId,
+           bool& noiseFlag,
+           bool&    feMask,
+           bool&   tdcMask,
+           bool&  trigMask,
+           bool&  deadFlag,
+           bool&  nohvFlag ) const;
+  int get( const DTWireId& id,
+           bool& noiseFlag,
+           bool&    feMask,
+           bool&   tdcMask,
+           bool&  trigMask,
+           bool&  deadFlag,
+           bool&  nohvFlag ) const;
 
   /// access version
   const
@@ -198,9 +224,9 @@ class DTStatusFlag {
                    bool flag );
 
   /// Access methods to data
-  typedef std::map<DTStatusFlagId,
-                   DTStatusFlagData,
-                   DTStatusFlagCompare>::const_iterator const_iterator;
+  typedef std::vector< std::pair<DTStatusFlagId,
+                                 DTStatusFlagData> >::const_iterator
+                                                      const_iterator;
   const_iterator begin() const;
   const_iterator end() const;
 
@@ -208,7 +234,11 @@ class DTStatusFlag {
 
   std::string dataVersion;
 
-  std::map<DTStatusFlagId,DTStatusFlagData,DTStatusFlagCompare> cellData;
+  std::vector< std::pair<DTStatusFlagId,DTStatusFlagData> > dataList;
+
+  /// read and store full content
+  void cacheMap() const;
+  std::string mapName() const;
 
 };
 

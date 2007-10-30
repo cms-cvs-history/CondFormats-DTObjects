@@ -4,25 +4,36 @@
 #include "CondFormats/DTObjects/interface/DTMtime.h"
 #include "CondFormats/DTObjects/interface/DTRangeT0.h"
 #include "CondFormats/DTObjects/interface/DTStatusFlag.h"
+#include "CondFormats/DTObjects/interface/DTDeadFlag.h"
 #include "CondFormats/DTObjects/interface/DTPerformance.h"
 
 namespace {
-  std::map<DTT0Id,DTT0Data,DTT0Compare> t0Map;
-  std::map<DTTtrigId,DTTtrigData,DTTtrigCompare> tTrigMap;
-  std::map<DTMtimeId,DTMtimeData,DTMtimeCompare> mTimeMap;
-  std::map<DTRangeT0Id,DTRangeT0Data,DTRangeT0Compare> rangeT0Map;
-  std::map<DTStatusFlagId,DTStatusFlagData,DTStatusFlagCompare> statusFlagMap;
-  std::map<DTPerformanceId,DTPerformanceData,DTPerformanceCompare> performanceMap;
+//  std::map<DTT0Id,DTT0Data,DTT0Compare> t0Map;
+//  std::map<DTTtrigId,DTTtrigData,DTTtrigCompare> tTrigMap;
+//  std::map<DTMtimeId,DTMtimeData,DTMtimeCompare> mTimeMap;
+//  std::map<DTRangeT0Id,DTRangeT0Data,DTRangeT0Compare> rangeT0Map;
+//  std::map<DTStatusFlagId,DTStatusFlagData,DTStatusFlagCompare> statusFlagMap;
+//  std::map<DTDeadFlagId,DTDeadFlagData,DTDeadFlagCompare> deadFlagMap;
+//  std::map<DTPerformanceId,DTPerformanceData,DTPerformanceCompare> performanceMap;
+  std::pair<DTT0Id,DTT0Data> t0Pair;
+  std::pair<DTTtrigId,DTTtrigData> tTrigPair;
+  std::pair<DTMtimeId,DTMtimeData> mTimePair;
+  std::pair<DTRangeT0Id,DTRangeT0Data> rangeT0Pair;
+  std::pair<DTStatusFlagId,DTStatusFlagData> statusFlagPair;
+  std::pair<DTDeadFlagId,DTDeadFlagData> deadFlagPair;
+  std::pair<DTPerformanceId,DTPerformanceData> performancePair;
 }
 
 /*
 // Declaration of the iterator (necessary for the generation of the dictionary)
 template std::vector<DTReadOutGeometryLink>::iterator;
 template std::vector<DTReadOutGeometryLink>::const_iterator;
-//template std::vector<DTCellT0Data>::iterator;
-//template std::vector<DTCellT0Data>::const_iterator;
-template std::map<DTT0Id,DTT0Data,DTT0Compare>::iterator;
-template std::map<DTT0Id,DTT0Data,DTT0Compare>::const_iterator;
+////template std::vector<DTCellT0Data>::iterator;
+////template std::vector<DTCellT0Data>::const_iterator;
+//template std::map<DTT0Id,DTT0Data,DTT0Compare>::iterator;
+//template std::map<DTT0Id,DTT0Data,DTT0Compare>::const_iterator;
+template std::vector< std::pair<DTT0Id,DTT0Data> >::iterator;
+template std::vector< std::pair<DTT0Id,DTT0Data> >::const_iterator;
 //template std::vector<DTSLTtrigData>::iterator;
 //template std::vector<DTSLTtrigData>::const_iterator;
 template std::map<DTTtrigId,DTTtrigData,DTTtrigCompare>::iterator;

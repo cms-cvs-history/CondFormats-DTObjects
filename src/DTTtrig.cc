@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2006/08/22 12:46:52 $
- *  $Revision: 1.11 $
+ *  $Date: 2007/01/22 18:24:45 $
+ *  $Revision: 1.12 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -11,6 +11,7 @@
 // This Class' Header --
 //----------------------
 #include "CondFormats/DTObjects/interface/DTTtrig.h"
+#include "CondFormats/DTObjects/interface/DTDataBuffer.h"
 
 //-------------------------------
 // Collaborating Class Headers --
@@ -46,7 +47,9 @@ DTTtrigId::DTTtrigId() :
     wheelId( 0 ),
   stationId( 0 ),
    sectorId( 0 ),
-       slId( 0 ) {
+       slId( 0 ),
+    layerId( 0 ),
+     cellId( 0 ) {
 }
 
 
@@ -60,6 +63,7 @@ DTTtrigData::DTTtrigData() :
 // Destructor --
 //--------------
 DTTtrig::~DTTtrig() {
+  DTDataBuffer<int,DTTtrigData*>::dropBuffer( mapName() );
 }
 
 
@@ -74,64 +78,88 @@ DTTtrigData::~DTTtrigData() {
 //--------------
 // Operations --
 //--------------
-bool DTTtrigCompare::operator()( const DTTtrigId& idl,
-                                 const DTTtrigId& idr ) const {
-  if ( idl.  wheelId < idr.  wheelId ) return true;
-  if ( idl.  wheelId > idr.  wheelId ) return false;
-  if ( idl.stationId < idr.stationId ) return true;
-  if ( idl.stationId > idr.stationId ) return false;
-  if ( idl. sectorId < idr. sectorId ) return true;
-  if ( idl. sectorId > idr. sectorId ) return false;
-  if ( idl.     slId < idr.     slId ) return true;
-  if ( idl.     slId > idr.     slId ) return false;
-  return false;
+int DTTtrig::get( int   wheelId,
+                  int stationId,
+                  int  sectorId,
+                  int      slId,
+                  float&  tTrig,
+                  float&  tTrms,
+                  DTTimeUnits::type unit ) const {
+  return get( wheelId, stationId, sectorId,
+                 slId,         0,        0,
+                tTrig, tTrms, unit );
+
 }
 
 
-int DTTtrig::slTtrig( int   wheelId,
-                      int stationId,
-                      int  sectorId,
-                      int      slId,
-                      float&  tTrig,
-                      float&  tTrms,
-                      DTTimeUnits::type unit ) const {
+int DTTtrig::get( int   wheelId,
+                  int stationId,
+                  int  sectorId,
+                  int      slId,
+                  int   layerId,
+                  int    cellId,
+                  float&  tTrig,
+                  float&  tTrms,
+                  DTTimeUnits::type unit ) const {
 
-  tTrig = 0.0;
+  tTrig =
   tTrms = 0.0;
 
-  DTTtrigId key;
-  key.  wheelId =   wheelId;
-  key.stationId = stationId;
-  key. sectorId =  sectorId;
-  key.     slId =      slId;
-  std::map<DTTtrigId,
-           DTTtrigData,
-           DTTtrigCompare>::const_iterator iter = slData.find( key );
-
-  if ( iter != slData.end() ) {
-    const DTTtrigData& data = iter->second;
-    tTrig = data.tTrig;
-    tTrms = data.tTrms;
+  std::string mName = mapName();
+  DTBufferTree<int,DTTtrigData*>* dBuf =
+  DTDataBuffer<int,DTTtrigData*>::findBuffer( mName );
+  if ( dBuf == 0 ) {
+    cacheMap();
+    dBuf =
+    DTDataBuffer<int,DTTtrigData*>::findBuffer( mName );
+  }
+  std::vector<int> chanKey;
+  chanKey.push_back(   wheelId );
+  chanKey.push_back( stationId );
+  chanKey.push_back(  sectorId );
+  chanKey.push_back(      slId );
+  chanKey.push_back(   layerId );
+  chanKey.push_back(    cellId );
+  DTTtrigData* data;
+  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), data );
+  if ( !searchStatus ) {
+    tTrig = data->tTrig;
+    tTrms = data->tTrms;
     if ( unit == DTTimeUnits::ns ) {
       tTrig *= nsPerCount;
       tTrms *= nsPerCount;
     }
-    return 0;
   }
-  return 1;
+
+  return searchStatus;
 
 }
 
 
-int DTTtrig::slTtrig( const DTSuperLayerId& id,
-                      float&  tTrig,
-                      float&  tTrms,
-                      DTTimeUnits::type unit ) const {
-  return slTtrig( id.wheel(),
-                  id.station(),
-                  id.sector(),
-                  id.superLayer(),
-                  tTrig, tTrms, unit );
+int DTTtrig::get( const DTSuperLayerId& id,
+                  float&  tTrig,
+                  float&  tTrms,
+                  DTTimeUnits::type unit ) const {
+  return get( id.wheel(),
+              id.station(),
+              id.sector(),
+              id.superLayer(), 0, 0,
+              tTrig, tTrms, unit );
+}
+
+
+int DTTtrig::get( const DetId& id,
+                  float&  tTrig,
+                  float&  tTrms,
+                  DTTimeUnits::type unit ) const {
+  DTWireId wireId( id.rawId() );
+  return get( wireId.wheel(),
+              wireId.station(),
+              wireId.sector(),
+              wireId.superLayer(),
+              wireId.layer(),
+              wireId.wire(),
+              tTrig, tTrms, unit );
 }
 
 
@@ -152,44 +180,78 @@ std::string& DTTtrig::version() {
 
 
 void DTTtrig::clear() {
-  slData.clear();
+  dataList.clear();
   return;
 }
 
 
-int DTTtrig::setSLTtrig( int   wheelId,
-                         int stationId,
-                         int  sectorId,
-                         int      slId,
-                         float   tTrig,
-                         float   tTrms,
-                         DTTimeUnits::type unit ) {
+int DTTtrig::set( int   wheelId,
+                  int stationId,
+                  int  sectorId,
+                  int      slId,
+                  float   tTrig,
+                  float   tTrms,
+                  DTTimeUnits::type unit ) {
+  return set( wheelId, stationId, sectorId,
+                 slId,         0,        0,
+                tTrig, tTrms, unit );
+
+}
+
+
+int DTTtrig::set( int   wheelId,
+                  int stationId,
+                  int  sectorId,
+                  int      slId,
+                  int   layerId,
+                  int    cellId,
+                  float   tTrig,
+                  float   tTrms,
+                  DTTimeUnits::type unit ) {
 
   if ( unit == DTTimeUnits::ns ) {
     tTrig /= nsPerCount;
     tTrms /= nsPerCount;
   }
 
-  DTTtrigId key;
-  key.  wheelId =   wheelId;
-  key.stationId = stationId;
-  key. sectorId =  sectorId;
-  key.     slId =      slId;
+  std::string mName = mapName();
+  DTBufferTree<int,DTTtrigData*>* dBuf =
+  DTDataBuffer<int,DTTtrigData*>::findBuffer( mName );
+  if ( dBuf == 0 ) {
+    cacheMap();
+    dBuf =
+    DTDataBuffer<int,DTTtrigData*>::findBuffer( mName );
+  }
+  std::vector<int> chanKey;
+  chanKey.push_back(   wheelId );
+  chanKey.push_back( stationId );
+  chanKey.push_back(  sectorId );
+  chanKey.push_back(      slId );
+  chanKey.push_back(   layerId );
+  chanKey.push_back(    cellId );
+  DTTtrigData* dptr;
+  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), dptr );
 
-  std::map<DTTtrigId,
-           DTTtrigData,
-           DTTtrigCompare>::iterator iter = slData.find( key );
-  if ( iter != slData.end() ) {
-    DTTtrigData& data = iter->second;
+  if ( !searchStatus ) {
+    DTTtrigData& data = *dptr;
     data.tTrig = tTrig;
     data.tTrms = tTrms;
     return -1;
   }
   else {
+    DTTtrigId key;
+    key.  wheelId =   wheelId;
+    key.stationId = stationId;
+    key. sectorId =  sectorId;
+    key.     slId =      slId;
+    key.  layerId =   layerId;
+    key.   cellId =    cellId;
     DTTtrigData data;
     data.tTrig = tTrig;
     data.tTrms = tTrms;
-    slData.insert( std::pair<const DTTtrigId,DTTtrigData>( key, data ) );
+    dataList.push_back( std::pair<DTTtrigId,DTTtrigData>( key, data ) );
+    DTTtrigData* dptr = &( dataList.back().second );
+    dBuf->insert( chanKey.begin(), chanKey.end(), dptr  );
     return 0;
   }
 
@@ -198,15 +260,30 @@ int DTTtrig::setSLTtrig( int   wheelId,
 }
 
 
-int DTTtrig::setSLTtrig( const DTSuperLayerId& id,
-                         float   tTrig,
-                         float   tTrms,
-                         DTTimeUnits::type unit ) {
-  return setSLTtrig( id.wheel(),
-                     id.station(),
-                     id.sector(),
-                     id.superLayer(),
-                     tTrig, tTrms, unit );
+int DTTtrig::set( const DTSuperLayerId& id,
+                  float   tTrig,
+                  float   tTrms,
+                  DTTimeUnits::type unit ) {
+  return set( id.wheel(),
+              id.station(),
+              id.sector(),
+              id.superLayer(), 0, 0,
+              tTrig, tTrms, unit );
+}
+
+
+int DTTtrig::set( const DetId& id,
+                  float   tTrig,
+                  float   tTrms,
+                  DTTimeUnits::type unit ) {
+  DTWireId wireId( id.rawId() );
+  return set( wireId.wheel(),
+              wireId.station(),
+              wireId.sector(),
+              wireId.superLayer(),
+              wireId.layer(),
+              wireId.wire(),
+              tTrig, tTrms, unit );
 }
 
 
@@ -216,12 +293,64 @@ void DTTtrig::setUnit( float unit ) {
 
 
 DTTtrig::const_iterator DTTtrig::begin() const {
-  return slData.begin();
+  return dataList.begin();
 }
 
 
 DTTtrig::const_iterator DTTtrig::end() const {
-  return slData.end();
+  return dataList.end();
 }
 
+
+std::string DTTtrig::mapName() const {
+  std::string name = dataVersion + "_map_Ttrig";
+  char nptr[100];
+  sprintf( nptr, "%x", reinterpret_cast<unsigned int>( this ) );
+  name += nptr;
+  return name;
+}
+
+
+void DTTtrig::cacheMap() const {
+
+  std::string mName = mapName();
+  DTBufferTree<int,DTTtrigData*>* dBuf =
+  DTDataBuffer<int,DTTtrigData*>::openBuffer( mName );
+
+  const_iterator iter = dataList.begin();
+  const_iterator iend = dataList.end();
+  int    wheelId;
+  int  stationId;
+  int   sectorId;
+  int       slId;
+  int    layerId;
+  int     cellId;
+  while ( iter != iend ) {
+
+    const std::pair<DTTtrigId, DTTtrigData>& link = *iter++;
+    const DTTtrigId& chan = link.first;
+      wheelId = chan.  wheelId;
+    stationId = chan.stationId;
+     sectorId = chan. sectorId;
+         slId = chan.     slId;
+      layerId = chan.  layerId;
+       cellId = chan.   cellId;
+
+    const DTTtrigData* dptr = &( link.second );
+
+    std::vector<int> chanKey;
+    chanKey.push_back(   wheelId );
+    chanKey.push_back( stationId );
+    chanKey.push_back(  sectorId );
+    chanKey.push_back(      slId );
+    chanKey.push_back(   layerId );
+    chanKey.push_back(    cellId );
+    dBuf->insert( chanKey.begin(), chanKey.end(),
+                  const_cast<DTTtrigData*>( dptr ) );
+
+  }
+
+  return;
+
+}
 

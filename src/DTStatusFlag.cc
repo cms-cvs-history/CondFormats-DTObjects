@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2006/08/22 12:46:52 $
- *  $Revision: 1.5 $
+ *  $Date: 2007/01/22 18:24:45 $
+ *  $Revision: 1.6 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -11,6 +11,7 @@
 // This Class' Header --
 //----------------------
 #include "CondFormats/DTObjects/interface/DTStatusFlag.h"
+#include "CondFormats/DTObjects/interface/DTDataBuffer.h"
 
 //-------------------------------
 // Collaborating Class Headers --
@@ -59,6 +60,7 @@ DTStatusFlagData::DTStatusFlagData() :
 // Destructor --
 //--------------
 DTStatusFlag::~DTStatusFlag() {
+  DTDataBuffer<int,DTStatusFlagData*>::dropBuffer( mapName() );
 }
 
 
@@ -73,83 +75,72 @@ DTStatusFlagData::~DTStatusFlagData() {
 //--------------
 // Operations --
 //--------------
-bool DTStatusFlagCompare::operator()( const DTStatusFlagId& idl,
-                                      const DTStatusFlagId& idr ) const {
-  if ( idl.  wheelId < idr.  wheelId ) return true;
-  if ( idl.  wheelId > idr.  wheelId ) return false;
-  if ( idl.stationId < idr.stationId ) return true;
-  if ( idl.stationId > idr.stationId ) return false;
-  if ( idl. sectorId < idr. sectorId ) return true;
-  if ( idl. sectorId > idr. sectorId ) return false;
-  if ( idl.     slId < idr.     slId ) return true;
-  if ( idl.     slId > idr.     slId ) return false;
-  if ( idl.  layerId < idr.  layerId ) return true;
-  if ( idl.  layerId > idr.  layerId ) return false;
-  if ( idl.   cellId < idr.   cellId ) return true;
-  if ( idl.   cellId > idr.   cellId ) return false;
-  return false;
-}
+int DTStatusFlag::get( int   wheelId,
+                       int stationId,
+                       int  sectorId,
+                       int      slId,
+                       int   layerId,
+                       int    cellId,
+                       bool& noiseFlag,
+                       bool&    feMask,
+                       bool&   tdcMask,
+                       bool&  trigMask,
+                       bool&  deadFlag,
+                       bool&  nohvFlag ) const {
 
-
-int DTStatusFlag::cellStatus( int   wheelId,
-                              int stationId,
-                              int  sectorId,
-                              int      slId,
-                              int   layerId,
-                              int    cellId,
-                              bool& noiseFlag,
-                              bool&    feMask,
-                              bool&   tdcMask,
-                              bool&  trigMask,
-                              bool&  deadFlag,
-                              bool&  nohvFlag ) const {
-
-  noiseFlag = false;
-     feMask = false;
-    tdcMask = false;
-   deadFlag = false;
+  noiseFlag =
+     feMask =
+    tdcMask =
+   deadFlag =
    nohvFlag = false;
 
-  DTStatusFlagId key;
-  key.  wheelId =   wheelId;
-  key.stationId = stationId;
-  key. sectorId =  sectorId;
-  key.     slId =      slId;
-  key.  layerId =   layerId;
-  key.   cellId =    cellId;
-  std::map<DTStatusFlagId,
-           DTStatusFlagData,
-           DTStatusFlagCompare>::const_iterator iter = cellData.find( key );
-
-  if ( iter != cellData.end() ) {
-    const DTStatusFlagData& data = iter->second;
-    noiseFlag = data.noiseFlag;
-       feMask = data.   feMask;
-      tdcMask = data.  tdcMask;
-     deadFlag = data. deadFlag;
-     nohvFlag = data. nohvFlag;
-    return 0;
+  std::string mName = mapName();
+  DTBufferTree<int,DTStatusFlagData*>* dBuf =
+  DTDataBuffer<int,DTStatusFlagData*>::findBuffer( mName );
+  if ( dBuf == 0 ) {
+    cacheMap();
+    dBuf =
+    DTDataBuffer<int,DTStatusFlagData*>::findBuffer( mName );
   }
-  return 1;
+  std::vector<int> chanKey;
+  chanKey.push_back(   wheelId );
+  chanKey.push_back( stationId );
+  chanKey.push_back(  sectorId );
+  chanKey.push_back(      slId );
+  chanKey.push_back(   layerId );
+  chanKey.push_back(    cellId );
+  DTStatusFlagData* data;
+  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(),
+                                          data );
+  if ( !searchStatus ) {
+    noiseFlag = data->noiseFlag;
+       feMask = data->   feMask;
+      tdcMask = data->  tdcMask;
+     trigMask = data-> trigMask;
+     deadFlag = data-> deadFlag;
+     nohvFlag = data-> nohvFlag;
+  }
+
+  return searchStatus;
 
 }
 
 
-int DTStatusFlag::cellStatus( const DTWireId& id,
-                              bool& noiseFlag,
-                              bool&    feMask,
-                              bool&   tdcMask,
-                              bool&  trigMask,
-                              bool&  deadFlag,
-                              bool&  nohvFlag ) const {
-  return cellStatus( id.wheel(),
-                     id.station(),
-                     id.sector(),
-                     id.superLayer(),
-                     id.layer(),
-                     id.wire(),
-                     noiseFlag,   feMask,  tdcMask,
-                      trigMask, deadFlag, nohvFlag );
+int DTStatusFlag::get( const DTWireId& id,
+                       bool& noiseFlag,
+                       bool&    feMask,
+                       bool&   tdcMask,
+                       bool&  trigMask,
+                       bool&  deadFlag,
+                       bool&  nohvFlag ) const {
+  return get( id.wheel(),
+              id.station(),
+              id.sector(),
+              id.superLayer(),
+              id.layer(),
+              id.wire(),
+              noiseFlag,   feMask,  tdcMask,
+               trigMask, deadFlag, nohvFlag );
 }
 
 
@@ -165,7 +156,7 @@ std::string& DTStatusFlag::version() {
 
 
 void DTStatusFlag::clear() {
-  cellData.clear();
+  dataList.clear();
   return;
 }
 
@@ -183,19 +174,27 @@ int DTStatusFlag::setCellStatus( int   wheelId,
                                  bool  deadFlag,
                                  bool  nohvFlag ) {
 
-  DTStatusFlagId key;
-  key.  wheelId =   wheelId;
-  key.stationId = stationId;
-  key. sectorId =  sectorId;
-  key.     slId =      slId;
-  key.  layerId =   layerId;
-  key.   cellId =    cellId;
+  std::string mName = mapName();
+  DTBufferTree<int,DTStatusFlagData*>* dBuf =
+  DTDataBuffer<int,DTStatusFlagData*>::findBuffer( mName );
+  if ( dBuf == 0 ) {
+    cacheMap();
+    dBuf =
+    DTDataBuffer<int,DTStatusFlagData*>::findBuffer( mName );
+  }
+  std::vector<int> chanKey;
+  chanKey.push_back(   wheelId );
+  chanKey.push_back( stationId );
+  chanKey.push_back(  sectorId );
+  chanKey.push_back(      slId );
+  chanKey.push_back(   layerId );
+  chanKey.push_back(    cellId );
+  DTStatusFlagData* dptr;
+  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(),
+                                          dptr );
 
-  std::map<DTStatusFlagId,
-           DTStatusFlagData,
-           DTStatusFlagCompare>::iterator iter = cellData.find( key );
-  if ( iter != cellData.end() ) {
-    DTStatusFlagData& data = iter->second;
+  if ( !searchStatus ) {
+    DTStatusFlagData& data = *dptr;
     data.noiseFlag = noiseFlag;
     data.   feMask =    feMask;
     data.  tdcMask =   tdcMask;
@@ -205,6 +204,13 @@ int DTStatusFlag::setCellStatus( int   wheelId,
     return -1;
   }
   else {
+    DTStatusFlagId key;
+    key.  wheelId =   wheelId;
+    key.stationId = stationId;
+    key. sectorId =  sectorId;
+    key.     slId =      slId;
+    key.  layerId =   layerId;
+    key.   cellId =    cellId;
     DTStatusFlagData data;
     data.noiseFlag = noiseFlag;
     data.   feMask =    feMask;
@@ -212,8 +218,10 @@ int DTStatusFlag::setCellStatus( int   wheelId,
     data. trigMask =  trigMask;
     data. deadFlag =  deadFlag;
     data. nohvFlag =  nohvFlag;
-    cellData.insert( std::pair<const DTStatusFlagId,
-                                     DTStatusFlagData>( key, data ) );
+    dataList.push_back( std::pair<const DTStatusFlagId,
+                                        DTStatusFlagData>( key, data ) );
+    DTStatusFlagData* dptr = &( dataList.back().second );
+    dBuf->insert( chanKey.begin(), chanKey.end(), dptr  );
     return 0;
   }
 
@@ -571,12 +579,64 @@ int DTStatusFlag::setCellNoHV( const DTWireId& id,
 
 
 DTStatusFlag::const_iterator DTStatusFlag::begin() const {
-  return cellData.begin();
+  return dataList.begin();
 }
 
 
 DTStatusFlag::const_iterator DTStatusFlag::end() const {
-  return cellData.end();
+  return dataList.end();
 }
 
+
+std::string DTStatusFlag::mapName() const {
+  std::string name = dataVersion + "_map_StatusFlag";
+  char nptr[100];
+  sprintf( nptr, "%x", reinterpret_cast<unsigned int>( this ) );
+  name += nptr;
+  return name;
+}
+
+
+void DTStatusFlag::cacheMap() const {
+
+  std::string mName = mapName();
+  DTBufferTree<int,DTStatusFlagData*>* dBuf =
+  DTDataBuffer<int,DTStatusFlagData*>::openBuffer( mName );
+
+  const_iterator iter = dataList.begin();
+  const_iterator iend = dataList.end();
+  int    wheelId;
+  int  stationId;
+  int   sectorId;
+  int       slId;
+  int    layerId;
+  int     cellId;
+  while ( iter != iend ) {
+
+    const std::pair<DTStatusFlagId, DTStatusFlagData>& link = *iter++;
+    const DTStatusFlagId& chan = link.first;
+      wheelId = chan.  wheelId;
+    stationId = chan.stationId;
+     sectorId = chan. sectorId;
+         slId = chan.     slId;
+      layerId = chan.  layerId;
+       cellId = chan.   cellId;
+
+    const DTStatusFlagData* dptr = &( link.second );
+
+    std::vector<int> chanKey;
+    chanKey.push_back(   wheelId );
+    chanKey.push_back( stationId );
+    chanKey.push_back(  sectorId );
+    chanKey.push_back(      slId );
+    chanKey.push_back(   layerId );
+    chanKey.push_back(    cellId );
+    dBuf->insert( chanKey.begin(), chanKey.end(),
+                  const_cast<DTStatusFlagData*>( dptr ) );
+
+  }
+
+  return;
+
+}
 
