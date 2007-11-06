@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007/01/22 18:24:45 $
- *  $Revision: 1.12 $
+ *  $Date: 2007/10/30 17:30:20 $
+ *  $Revision: 1.12.6.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -106,13 +106,14 @@ int DTTtrig::get( int   wheelId,
   tTrms = 0.0;
 
   std::string mName = mapName();
-  DTBufferTree<int,DTTtrigData*>* dBuf =
-  DTDataBuffer<int,DTTtrigData*>::findBuffer( mName );
+  DTBufferTree<int,int>* dBuf =
+  DTDataBuffer<int,int>::findBuffer( mName );
   if ( dBuf == 0 ) {
     cacheMap();
     dBuf =
-    DTDataBuffer<int,DTTtrigData*>::findBuffer( mName );
+    DTDataBuffer<int,int>::findBuffer( mName );
   }
+
   std::vector<int> chanKey;
   chanKey.push_back(   wheelId );
   chanKey.push_back( stationId );
@@ -120,11 +121,12 @@ int DTTtrig::get( int   wheelId,
   chanKey.push_back(      slId );
   chanKey.push_back(   layerId );
   chanKey.push_back(    cellId );
-  DTTtrigData* data;
-  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), data );
+  int ientry;
+  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), ientry );
   if ( !searchStatus ) {
-    tTrig = data->tTrig;
-    tTrms = data->tTrms;
+    const DTTtrigData& data( dataList[ientry].second );
+    tTrig = data.tTrig;
+    tTrms = data.tTrms;
     if ( unit == DTTimeUnits::ns ) {
       tTrig *= nsPerCount;
       tTrms *= nsPerCount;
@@ -215,12 +217,12 @@ int DTTtrig::set( int   wheelId,
   }
 
   std::string mName = mapName();
-  DTBufferTree<int,DTTtrigData*>* dBuf =
-  DTDataBuffer<int,DTTtrigData*>::findBuffer( mName );
+  DTBufferTree<int,int>* dBuf =
+  DTDataBuffer<int,int>::findBuffer( mName );
   if ( dBuf == 0 ) {
     cacheMap();
     dBuf =
-    DTDataBuffer<int,DTTtrigData*>::findBuffer( mName );
+    DTDataBuffer<int,int>::findBuffer( mName );
   }
   std::vector<int> chanKey;
   chanKey.push_back(   wheelId );
@@ -229,11 +231,11 @@ int DTTtrig::set( int   wheelId,
   chanKey.push_back(      slId );
   chanKey.push_back(   layerId );
   chanKey.push_back(    cellId );
-  DTTtrigData* dptr;
-  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), dptr );
+  int ientry;
+  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), ientry );
 
   if ( !searchStatus ) {
-    DTTtrigData& data = *dptr;
+    DTTtrigData& data( dataList[ientry].second );
     data.tTrig = tTrig;
     data.tTrms = tTrms;
     return -1;
@@ -249,9 +251,9 @@ int DTTtrig::set( int   wheelId,
     DTTtrigData data;
     data.tTrig = tTrig;
     data.tTrms = tTrms;
+    ientry = dataList.size();
     dataList.push_back( std::pair<DTTtrigId,DTTtrigData>( key, data ) );
-    DTTtrigData* dptr = &( dataList.back().second );
-    dBuf->insert( chanKey.begin(), chanKey.end(), dptr  );
+    dBuf->insert( chanKey.begin(), chanKey.end(), ientry );
     return 0;
   }
 
@@ -314,39 +316,23 @@ std::string DTTtrig::mapName() const {
 void DTTtrig::cacheMap() const {
 
   std::string mName = mapName();
-  DTBufferTree<int,DTTtrigData*>* dBuf =
-  DTDataBuffer<int,DTTtrigData*>::openBuffer( mName );
+  DTBufferTree<int,int>* dBuf =
+  DTDataBuffer<int,int>::openBuffer( mName );
 
-  const_iterator iter = dataList.begin();
-  const_iterator iend = dataList.end();
-  int    wheelId;
-  int  stationId;
-  int   sectorId;
-  int       slId;
-  int    layerId;
-  int     cellId;
-  while ( iter != iend ) {
+  int entryNum = 0;
+  int entryMax = dataList.size();
+  while ( entryNum < entryMax ) {
 
-    const std::pair<DTTtrigId, DTTtrigData>& link = *iter++;
-    const DTTtrigId& chan = link.first;
-      wheelId = chan.  wheelId;
-    stationId = chan.stationId;
-     sectorId = chan. sectorId;
-         slId = chan.     slId;
-      layerId = chan.  layerId;
-       cellId = chan.   cellId;
-
-    const DTTtrigData* dptr = &( link.second );
+    const DTTtrigId& chan = dataList[entryNum].first;
 
     std::vector<int> chanKey;
-    chanKey.push_back(   wheelId );
-    chanKey.push_back( stationId );
-    chanKey.push_back(  sectorId );
-    chanKey.push_back(      slId );
-    chanKey.push_back(   layerId );
-    chanKey.push_back(    cellId );
-    dBuf->insert( chanKey.begin(), chanKey.end(),
-                  const_cast<DTTtrigData*>( dptr ) );
+    chanKey.push_back( chan.  wheelId );
+    chanKey.push_back( chan.stationId );
+    chanKey.push_back( chan. sectorId );
+    chanKey.push_back( chan.     slId );
+    chanKey.push_back( chan.  layerId );
+    chanKey.push_back( chan.   cellId );
+    dBuf->insert( chanKey.begin(), chanKey.end(), entryNum++ );
 
   }
 

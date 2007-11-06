@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007/01/22 18:24:45 $
- *  $Revision: 1.3 $
+ *  $Date: 2007/10/30 17:30:20 $
+ *  $Revision: 1.3.6.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -101,28 +101,30 @@ int DTPerformance::get( int   wheelId,
   meanEfficiency = 0.0;
 
   std::string mName = mapName();
-  DTBufferTree<int,DTPerformanceData*>* dBuf =
-  DTDataBuffer<int,DTPerformanceData*>::findBuffer( mName );
+  DTBufferTree<int,int>* dBuf =
+  DTDataBuffer<int,int>::findBuffer( mName );
   if ( dBuf == 0 ) {
     cacheMap();
     dBuf =
-    DTDataBuffer<int,DTPerformanceData*>::findBuffer( mName );
+    DTDataBuffer<int,int>::findBuffer( mName );
   }
+
   std::vector<int> chanKey;
   chanKey.push_back(   wheelId );
   chanKey.push_back( stationId );
   chanKey.push_back(  sectorId );
   chanKey.push_back(      slId );
-  DTPerformanceData* data;
-  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), data );
+  int ientry;
+  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), ientry );
   if ( !searchStatus ) {
-    meanT0         = data->meanT0;
-    meanTtrig      = data->meanTtrig;
-    meanMtime      = data->meanMtime;
-    meanNoise      = data->meanNoise;
-    meanAfterPulse = data->meanAfterPulse;
-    meanResolution = data->meanResolution;
-    meanEfficiency = data->meanEfficiency;
+    const DTPerformanceData& data( dataList[ientry].second );
+    meanT0         = data.meanT0;
+    meanTtrig      = data.meanTtrig;
+    meanMtime      = data.meanMtime;
+    meanNoise      = data.meanNoise;
+    meanAfterPulse = data.meanAfterPulse;
+    meanResolution = data.meanResolution;
+    meanEfficiency = data.meanEfficiency;
     if ( unit == DTTimeUnits::ns ) {
       meanT0    *= nsPerCount;
       meanTtrig *= nsPerCount;
@@ -201,23 +203,23 @@ int DTPerformance::set( int   wheelId,
   }
 
   std::string mName = mapName();
-  DTBufferTree<int,DTPerformanceData*>* dBuf =
-  DTDataBuffer<int,DTPerformanceData*>::findBuffer( mName );
+  DTBufferTree<int,int>* dBuf =
+  DTDataBuffer<int,int>::findBuffer( mName );
   if ( dBuf == 0 ) {
     cacheMap();
     dBuf =
-    DTDataBuffer<int,DTPerformanceData*>::findBuffer( mName );
+    DTDataBuffer<int,int>::findBuffer( mName );
   }
   std::vector<int> chanKey;
   chanKey.push_back(   wheelId );
   chanKey.push_back( stationId );
   chanKey.push_back(  sectorId );
   chanKey.push_back(      slId );
-  DTPerformanceData* dptr;
-  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), dptr );
+  int ientry;
+  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), ientry );
 
   if ( !searchStatus ) {
-    DTPerformanceData& data = *dptr;
+    DTPerformanceData& data( dataList[ientry].second );
     data.meanT0         = meanT0;
     data.meanTtrig      = meanTtrig;
     data.meanMtime      = meanMtime;
@@ -241,10 +243,10 @@ int DTPerformance::set( int   wheelId,
     data.meanAfterPulse = meanAfterPulse;
     data.meanResolution = meanResolution;
     data.meanEfficiency = meanEfficiency;
+    ientry = dataList.size();
     dataList.push_back( std::pair<DTPerformanceId,DTPerformanceData>(
                         key, data ) );
-    DTPerformanceData* dptr = &( dataList.back().second );
-    dBuf->insert( chanKey.begin(), chanKey.end(), dptr  );
+    dBuf->insert( chanKey.begin(), chanKey.end(), ientry );
     return 0;
   }
 
@@ -304,33 +306,21 @@ std::string DTPerformance::mapName() const {
 void DTPerformance::cacheMap() const {
 
   std::string mName = mapName();
-  DTBufferTree<int,DTPerformanceData*>* dBuf =
-  DTDataBuffer<int,DTPerformanceData*>::openBuffer( mName );
+  DTBufferTree<int,int>* dBuf =
+  DTDataBuffer<int,int>::openBuffer( mName );
 
-  const_iterator iter = dataList.begin();
-  const_iterator iend = dataList.end();
-  int    wheelId;
-  int  stationId;
-  int   sectorId;
-  int       slId;
-  while ( iter != iend ) {
+  int entryNum = 0;
+  int entryMax = dataList.size();
+  while ( entryNum < entryMax ) {
 
-    const std::pair<DTPerformanceId, DTPerformanceData>& link = *iter++;
-    const DTPerformanceId& chan = link.first;
-      wheelId = chan.  wheelId;
-    stationId = chan.stationId;
-     sectorId = chan. sectorId;
-         slId = chan.     slId;
-
-    const DTPerformanceData* dptr = &( link.second );
+    const DTPerformanceId& chan = dataList[entryNum].first;
 
     std::vector<int> chanKey;
-    chanKey.push_back(   wheelId );
-    chanKey.push_back( stationId );
-    chanKey.push_back(  sectorId );
-    chanKey.push_back(      slId );
-    dBuf->insert( chanKey.begin(), chanKey.end(),
-                  const_cast<DTPerformanceData*>( dptr ) );
+    chanKey.push_back( chan.  wheelId );
+    chanKey.push_back( chan.stationId );
+    chanKey.push_back( chan. sectorId );
+    chanKey.push_back( chan.     slId );
+    dBuf->insert( chanKey.begin(), chanKey.end(), entryNum++ );
 
   }
 

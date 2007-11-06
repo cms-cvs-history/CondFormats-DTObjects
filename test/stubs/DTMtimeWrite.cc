@@ -83,6 +83,8 @@ namespace edmtest {
       std::cout << "insert status: " << status << std::endl;
     }
 
+    chkData( mTime );
+
     if( dbservice->isNewTagRequest("DTMtimeRcd") ){
       dbservice->createNewIOV<DTMtime>(
                  mTime,dbservice->endOfTime(),"DTMtimeRcd");
@@ -94,5 +96,37 @@ namespace edmtest {
     }
 
   }
+
+  void DTMtimeWrite::chkData( DTMtime* mTime ) {
+    std::ifstream ifile( "testMtime.txt" );
+    int status = 0;
+    int whe;
+    int sta;
+    int sec;
+    int qua;
+    float mti;
+    float rms;
+    float ckmti;
+    float ckrms;
+    while ( ifile >> whe
+                  >> sta
+                  >> sec
+                  >> qua
+                  >> mti
+                  >> rms ) {
+      status = mTime->get( whe, sta, sec, qua, ckmti, ckrms );
+      std::cout << whe << " "
+                << sta << " "
+                << sec << " "
+                << qua << " "
+                << mti << " "
+                << rms << "  -> "
+                << ckmti << " "
+                << ckrms << "  -> ";
+      std::cout << "get status: " << status << std::endl;
+    }
+    return;
+  }
+
   DEFINE_FWK_MODULE(DTMtimeWrite);
 }

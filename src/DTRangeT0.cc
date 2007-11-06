@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007/01/22 18:24:45 $
- *  $Revision: 1.7 $
+ *  $Date: 2007/10/30 17:30:20 $
+ *  $Revision: 1.7.6.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -85,23 +85,25 @@ int DTRangeT0::get( int   wheelId,
   t0max = 0;
 
   std::string mName = mapName();
-  DTBufferTree<int,DTRangeT0Data*>* dBuf =
-  DTDataBuffer<int,DTRangeT0Data*>::findBuffer( mName );
+  DTBufferTree<int,int>* dBuf =
+  DTDataBuffer<int,int>::findBuffer( mName );
   if ( dBuf == 0 ) {
     cacheMap();
     dBuf =
-    DTDataBuffer<int,DTRangeT0Data*>::findBuffer( mName );
+    DTDataBuffer<int,int>::findBuffer( mName );
   }
+
   std::vector<int> chanKey;
   chanKey.push_back(   wheelId );
   chanKey.push_back( stationId );
   chanKey.push_back(  sectorId );
   chanKey.push_back(      slId );
-  DTRangeT0Data* data;
-  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), data );
+  int ientry;
+  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), ientry );
   if ( !searchStatus ) {
-    t0min = data->t0min;
-    t0max = data->t0max;
+    const DTRangeT0Data& data( dataList[ientry].second );
+    t0min = data.t0min;
+    t0max = data.t0max;
   }
 
   return searchStatus;
@@ -145,23 +147,23 @@ int DTRangeT0::set( int   wheelId,
                     int     t0max ) {
 
   std::string mName = mapName();
-  DTBufferTree<int,DTRangeT0Data*>* dBuf =
-  DTDataBuffer<int,DTRangeT0Data*>::findBuffer( mName );
+  DTBufferTree<int,int>* dBuf =
+  DTDataBuffer<int,int>::findBuffer( mName );
   if ( dBuf == 0 ) {
     cacheMap();
     dBuf =
-    DTDataBuffer<int,DTRangeT0Data*>::findBuffer( mName );
+    DTDataBuffer<int,int>::findBuffer( mName );
   }
   std::vector<int> chanKey;
   chanKey.push_back(   wheelId );
   chanKey.push_back( stationId );
   chanKey.push_back(  sectorId );
   chanKey.push_back(      slId );
-  DTRangeT0Data* dptr;
-  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), dptr );
+  int ientry;
+  int searchStatus = dBuf->find( chanKey.begin(), chanKey.end(), ientry );
 
   if ( !searchStatus ) {
-    DTRangeT0Data& data = *dptr;
+    DTRangeT0Data& data( dataList[ientry].second );
     data.t0min = t0min;
     data.t0max = t0max;
     return -1;
@@ -175,9 +177,9 @@ int DTRangeT0::set( int   wheelId,
     DTRangeT0Data data;
     data.t0min = t0min;
     data.t0max = t0max;
+    ientry = dataList.size();
     dataList.push_back( std::pair<DTRangeT0Id,DTRangeT0Data>( key, data ) );
-    DTRangeT0Data* dptr = &( dataList.back().second );
-    dBuf->insert( chanKey.begin(), chanKey.end(), dptr  );
+    dBuf->insert( chanKey.begin(), chanKey.end(), ientry );
     return 0;
   }
 
@@ -219,33 +221,21 @@ std::string DTRangeT0::mapName() const {
 void DTRangeT0::cacheMap() const {
 
   std::string mName = mapName();
-  DTBufferTree<int,DTRangeT0Data*>* dBuf =
-  DTDataBuffer<int,DTRangeT0Data*>::openBuffer( mName );
+  DTBufferTree<int,int>* dBuf =
+  DTDataBuffer<int,int>::openBuffer( mName );
 
-  const_iterator iter = dataList.begin();
-  const_iterator iend = dataList.end();
-  int    wheelId;
-  int  stationId;
-  int   sectorId;
-  int       slId;
-  while ( iter != iend ) {
+  int entryNum = 0;
+  int entryMax = dataList.size();
+  while ( entryNum < entryMax ) {
 
-    const std::pair<DTRangeT0Id, DTRangeT0Data>& link = *iter++;
-    const DTRangeT0Id& chan = link.first;
-      wheelId = chan.  wheelId;
-    stationId = chan.stationId;
-     sectorId = chan. sectorId;
-         slId = chan.     slId;
-
-    const DTRangeT0Data* dptr = &( link.second );
+    const DTRangeT0Id& chan = dataList[entryNum].first;
 
     std::vector<int> chanKey;
-    chanKey.push_back(   wheelId );
-    chanKey.push_back( stationId );
-    chanKey.push_back(  sectorId );
-    chanKey.push_back(      slId );
-    dBuf->insert( chanKey.begin(), chanKey.end(),
-                  const_cast<DTRangeT0Data*>( dptr ) );
+    chanKey.push_back( chan.  wheelId );
+    chanKey.push_back( chan.stationId );
+    chanKey.push_back( chan. sectorId );
+    chanKey.push_back( chan.     slId );
+    dBuf->insert( chanKey.begin(), chanKey.end(), entryNum++ );
 
   }
 
