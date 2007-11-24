@@ -6,8 +6,8 @@
  *       Class to hold drift tubes T0 range
  *             ( SL by SL min - max T0 )
  *
- *  $Date: 2006/07/19 09:32:41 $
- *  $Revision: 1.2 $
+ *  $Date: 2007/10/30 17:30:20 $
+ *  $Revision: 1.2.6.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -27,7 +27,6 @@
 //---------------
 #include <string>
 #include <vector>
-//#include <map>
 
 //              ---------------------
 //              -- Class Interface --

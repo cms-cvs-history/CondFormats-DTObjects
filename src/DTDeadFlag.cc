@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007/10/31 10:30:24 $
- *  $Revision: 1.2.2.2 $
+ *  $Date: 2007/11/06 14:37:25 $
+ *  $Revision: 1.2.2.3 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -11,12 +11,11 @@
 // This Class' Header --
 //----------------------
 #include "CondFormats/DTObjects/interface/DTDeadFlag.h"
-#include "CondFormats/DTObjects/interface/DTDataBuffer.h"
 
 //-------------------------------
 // Collaborating Class Headers --
 //-------------------------------
-
+#include "CondFormats/DTObjects/interface/DTDataBuffer.h"
 
 //---------------
 // C++ Headers --
@@ -58,6 +57,7 @@ DTDeadFlagData::DTDeadFlagData() :
 // Destructor --
 //--------------
 DTDeadFlag::~DTDeadFlag() {
+  DTDataBuffer<int,int>::dropBuffer( mapName() );
 }
 
 
@@ -145,6 +145,7 @@ std::string& DTDeadFlag::version() {
 
 
 void DTDeadFlag::clear() {
+  DTDataBuffer<int,int>::dropBuffer( mapName() );
   dataList.clear();
   return;
 }

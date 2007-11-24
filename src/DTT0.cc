@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007/10/30 17:30:20 $
- *  $Revision: 1.12.6.1 $
+ *  $Date: 2007/11/06 14:37:25 $
+ *  $Revision: 1.12.6.2 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -11,12 +11,11 @@
 // This Class' Header --
 //----------------------
 #include "CondFormats/DTObjects/interface/DTT0.h"
-#include "CondFormats/DTObjects/interface/DTDataBuffer.h"
 
 //-------------------------------
 // Collaborating Class Headers --
 //-------------------------------
-
+#include "CondFormats/DTObjects/interface/DTDataBuffer.h"
 
 //---------------
 // C++ Headers --
@@ -63,7 +62,7 @@ DTT0Data::DTT0Data() :
 // Destructor --
 //--------------
 DTT0::~DTT0() {
-  DTDataBuffer<int,DTT0Data*>::dropBuffer( mapName() );
+  DTDataBuffer<int,int>::dropBuffer( mapName() );
 }
 
 
@@ -79,14 +78,14 @@ DTT0Data::~DTT0Data() {
 // Operations --
 //--------------
 int DTT0::get( int   wheelId,
-                  int stationId,
-                  int  sectorId,
-                  int      slId,
-                  int   layerId,
-                  int    cellId,
-                  float& t0mean,
-                  float& t0rms,
-                  DTTimeUnits::type unit ) const {
+               int stationId,
+               int  sectorId,
+               int      slId,
+               int   layerId,
+               int    cellId,
+               float& t0mean,
+               float& t0rms,
+               DTTimeUnits::type unit ) const {
 
   t0mean =
   t0rms  = 0.0;
@@ -155,6 +154,7 @@ std::string& DTT0::version() {
 
 
 void DTT0::clear() {
+  DTDataBuffer<int,int>::dropBuffer( mapName() );
   dataList.clear();
   return;
 }

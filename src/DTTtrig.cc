@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007/10/30 17:30:20 $
- *  $Revision: 1.12.6.1 $
+ *  $Date: 2007/11/06 14:37:25 $
+ *  $Revision: 1.12.6.2 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -11,12 +11,11 @@
 // This Class' Header --
 //----------------------
 #include "CondFormats/DTObjects/interface/DTTtrig.h"
-#include "CondFormats/DTObjects/interface/DTDataBuffer.h"
 
 //-------------------------------
 // Collaborating Class Headers --
 //-------------------------------
-
+#include "CondFormats/DTObjects/interface/DTDataBuffer.h"
 
 //---------------
 // C++ Headers --
@@ -63,7 +62,7 @@ DTTtrigData::DTTtrigData() :
 // Destructor --
 //--------------
 DTTtrig::~DTTtrig() {
-  DTDataBuffer<int,DTTtrigData*>::dropBuffer( mapName() );
+  DTDataBuffer<int,int>::dropBuffer( mapName() );
 }
 
 
@@ -182,6 +181,7 @@ std::string& DTTtrig::version() {
 
 
 void DTTtrig::clear() {
+  DTDataBuffer<int,int>::dropBuffer( mapName() );
   dataList.clear();
   return;
 }

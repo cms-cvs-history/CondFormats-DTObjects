@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2006/03/30 14:08:50 $
- *  $Revision: 1.6 $
+ *  $Date: 2007/10/30 17:30:20 $
+ *  $Revision: 1.6.6.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -10,7 +10,7 @@
 //----------------------
 // This Class' Header --
 //----------------------
-#include "CondFormats/DTObjects/interface/DTDataBuffer.h"
+
 
 //-------------------------------
 // Collaborating Class Headers --

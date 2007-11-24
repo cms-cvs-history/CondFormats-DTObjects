@@ -1,6 +1,7 @@
 <use name=clhep>
 <use name=FWCore/ParameterSet>
 <use name=CondFormats/DTObjects>
+<use name=CondTools/DT>
 <use name=CondCore/DBCommon>
 <use name=CondCore/DBOutputService>
 <use name=CondCore/IOVService>
@@ -45,5 +46,11 @@
         <flags EDM_PLUGIN=1>
 </library>
 <library file=stubs/DTDeadUpdate.cc name=DTDeadUpdate>
+        <flags EDM_PLUGIN=1>
+</library>
+<library file=stubs/DTConfigPrint.cc name=DTConfigPrint>
+        <flags EDM_PLUGIN=1>
+</library>
+<library file=stubs/DTConfigWrite.cc name=DTConfigWrite>
         <flags EDM_PLUGIN=1>
 </library>

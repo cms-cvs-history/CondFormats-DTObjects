@@ -6,8 +6,12 @@
 #include "CondFormats/DTObjects/interface/DTStatusFlag.h"
 #include "CondFormats/DTObjects/interface/DTDeadFlag.h"
 #include "CondFormats/DTObjects/interface/DTPerformance.h"
+#include "CondFormats/DTObjects/interface/DTCCBConfig.h"
+#include "CondFormats/DTObjects/interface/DTConfigList.h"
+#include "CondFormats/DTObjects/interface/DTConfigData.h"
 
 namespace {
+//  std::map<int,DTConfigToken> refMap;
 //  std::map<DTT0Id,DTT0Data,DTT0Compare> t0Map;
 //  std::map<DTTtrigId,DTTtrigData,DTTtrigCompare> tTrigMap;
 //  std::map<DTMtimeId,DTMtimeData,DTMtimeCompare> mTimeMap;
@@ -15,6 +19,8 @@ namespace {
 //  std::map<DTStatusFlagId,DTStatusFlagData,DTStatusFlagCompare> statusFlagMap;
 //  std::map<DTDeadFlagId,DTDeadFlagData,DTDeadFlagCompare> deadFlagMap;
 //  std::map<DTPerformanceId,DTPerformanceData,DTPerformanceCompare> performanceMap;
+//  std::map<DTCCBId,std::vector<int>,DTCCBCompare> ccbData;
+  std::pair<int,DTConfigToken> refMap;
   std::pair<DTT0Id,DTT0Data> t0Pair;
   std::pair<DTTtrigId,DTTtrigData> tTrigPair;
   std::pair<DTMtimeId,DTMtimeData> mTimePair;
@@ -22,6 +28,7 @@ namespace {
   std::pair<DTStatusFlagId,DTStatusFlagData> statusFlagPair;
   std::pair<DTDeadFlagId,DTDeadFlagData> deadFlagPair;
   std::pair<DTPerformanceId,DTPerformanceData> performancePair;
+  std::pair<DTCCBId,int> ccbPair;
 }
 
 /*

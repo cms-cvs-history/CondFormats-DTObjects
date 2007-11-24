@@ -5,8 +5,8 @@
  *  Description:
  *
  *
- *  $Date: 2007/06/20 17:44:22 $
- *  $Revision: 1.2.4.1 $
+ *  $Date: 2007/10/30 17:30:20 $
+ *  $Revision: 1.2.6.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -51,7 +51,10 @@ public:
    */
   /// 
   int insert( ElementKey fKey, ElementKey lKey, const Content& cont );
+  int insert(  const Key& k,                    const Content& cont );
   int find(   ElementKey fKey, ElementKey lKey,       Content& cont );
+  int find(    const Key& k,                          Content& cont );
+  std::vector<Content> contList();
   static void setDefault( const Content& def );
 
  private:
@@ -64,6 +67,9 @@ public:
   map_cont bufferMap;
 
   static Content defaultContent;
+
+  void treeCont( std::vector<Content>& contentList );
+  void leafCont( std::vector<Content>& contentList );
 
 };
 
