@@ -1,7 +1,6 @@
 <use name=clhep>
 <use name=FWCore/ParameterSet>
 <use name=CondFormats/DTObjects>
-<use name=CondTools/DT>
 <use name=CondCore/DBCommon>
 <use name=CondCore/DBOutputService>
 <use name=CondCore/IOVService>
