@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2007/10/30 17:30:20 $
- *  $Revision: 1.3.6.1 $
+ *  $Date: 2007/11/24 12:29:06 $
+ *  $Revision: 1.3.6.2 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -24,8 +24,8 @@
 //-------------------
 // Initializations --
 //-------------------
-template <class Key, class Content>
-Content DTBufferTree<Key,Content>::defaultContent;
+//template <class Key, class Content>
+//Content DTBufferTree<Key,Content>::defaultContent;
 
 //----------------
 // Constructors --
@@ -139,7 +139,8 @@ void DTBufferTree<Key,Content>::leafCont( std::vector<Content>& list ) {
 
 template <class Key, class Content>
 void DTBufferTree<Key,Content>::setDefault( const Content& def ) {
-  DTBufferTree<Key,Content>::defaultContent = def;
+//  DTBufferTree<Key,Content>::
+  defaultContent = def;
 }
 
 
