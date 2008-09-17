@@ -4,7 +4,7 @@
 <POOLFILECATALOG>
   <File ID="2EEC1B58-82A4-DA11-9F3A-000E0C5CE043">
     <physical>
-      <pfn filetype="POOL_RDBMS" name="oracle://cms_orcoff_int2r/CMS_COND_DT"/>
+      <pfn filetype="POOL_RDBMS" name="sqlite:testcatalog.xml"/>
     </physical>
     <logical/>
   </File>
