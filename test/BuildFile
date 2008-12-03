@@ -8,48 +8,6 @@
 <use name=FWCore/Framework>	
 <use name=CondFormats/DataRecord>
 <use name=DataFormats/MuonDetId>
-<library file=stubs/DTMapPrint.cc name=DTMapPrint>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTMapWrite.cc name=DTMapWrite>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTT0Print.cc name=DTT0Print>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTT0Write.cc name=DTT0Write>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTRangeT0Print.cc name=DTRangeT0Print>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTRangeT0Write.cc name=DTRangeT0Write>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTTtrigPrint.cc name=DTTtrigPrint>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTTtrigWrite.cc name=DTTtrigWrite>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTMtimePrint.cc name=DTMtimePrint>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTMtimeWrite.cc name=DTMtimeWrite>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTDeadPrint.cc name=DTDeadPrint>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTDeadWrite.cc name=DTDeadWrite>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTDeadUpdate.cc name=DTDeadUpdate>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTConfigPrint.cc name=DTConfigPrint>
-        <flags EDM_PLUGIN=1>
-</library>
-<library file=stubs/DTConfigWrite.cc name=DTConfigWrite>
+<library file=stubs/*.cc name=CondFormatsDTObjectsTEST>
         <flags EDM_PLUGIN=1>
 </library>
