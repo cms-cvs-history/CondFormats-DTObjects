@@ -6,8 +6,8 @@
  *       Class to hold drift tubes TTrigs
  *             ( SL by SL time offsets )
  *
- *  $Date: 2008/09/29 13:10:34 $
- *  $Revision: 1.7 $
+ *  $Date: 2008/11/19 14:30:19 $
+ *  $Revision: 1.7.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -108,6 +108,26 @@ class DTTtrig {
            float&  tTrig,
            float&  tTrms,
            float&  kFact,
+           DTTimeUnits::type unit ) const;
+  int get( int   wheelId,
+           int stationId,
+           int  sectorId,
+           int      slId,
+           float&  tTrig,
+           DTTimeUnits::type unit ) const;
+  int get( int   wheelId,
+           int stationId,
+           int  sectorId,
+           int      slId,
+           int   layerId,
+           int    cellId,
+           float&  tTrig,
+           DTTimeUnits::type unit ) const;
+  int get( const DTSuperLayerId& id,
+           float&  tTrig,
+           DTTimeUnits::type unit ) const;
+  int get( const DetId& id,
+           float&  tTrig,
            DTTimeUnits::type unit ) const;
   float unit() const;
 

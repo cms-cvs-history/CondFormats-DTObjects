@@ -46,6 +46,7 @@ namespace edmtest {
       float trigTime;
       float trigTrms;
       float trigKfac;
+      float trigComp;
       tTrig->get( trigId.wheelId,
                   trigId.stationId,
                   trigId.sectorId,
@@ -53,6 +54,13 @@ namespace edmtest {
                   trigId.layerId,
                   trigId.cellId,
                   trigTime, trigTrms, trigKfac, DTTimeUnits::counts );
+      tTrig->get( trigId.wheelId,
+                  trigId.stationId,
+                  trigId.sectorId,
+                  trigId.slId,
+                  trigId.layerId,
+                  trigId.cellId,
+                  trigComp, DTTimeUnits::counts );
       std::cout << trigId.wheelId   << " "
                 << trigId.stationId << " "
                 << trigId.sectorId  << " "
@@ -64,7 +72,8 @@ namespace edmtest {
                 << trigData.kFact    << " -> "
                 << trigTime          << " "
                 << trigTrms          << " "
-                << trigKfac          << std::endl;
+                << trigKfac          << " -> "
+                << trigComp          << std::endl;
       iter++;
     }
   }

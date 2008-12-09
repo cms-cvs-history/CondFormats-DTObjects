@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2008/07/15 15:57:23 $
- *  $Revision: 1.15 $
+ *  $Date: 2008/11/19 14:30:19 $
+ *  $Revision: 1.15.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -172,6 +172,61 @@ int DTTtrig::get( const DetId& id,
               wireId.layer(),
               wireId.wire(),
               tTrig, tTrms, kFact, unit );
+}
+
+
+int DTTtrig::get( int   wheelId,
+                  int stationId,
+                  int  sectorId,
+                  int      slId,
+                  float&  tTrig,
+                  DTTimeUnits::type unit ) const {
+  return get( wheelId, stationId, sectorId, 
+                 slId,         0,        0, tTrig, unit );
+}
+
+
+int DTTtrig::get( int   wheelId,
+                  int stationId,
+                  int  sectorId,
+                  int      slId,
+                  int   layerId,
+                  int    cellId,
+                  float&  tTrig,
+                  DTTimeUnits::type unit ) const {
+  float tMean;
+  float tTrms;
+  float kFact;
+  int status = get( wheelId, stationId, sectorId,
+                       slId,   layerId,   cellId, 
+                      tMean,     tTrms,    kFact, unit );
+  tTrig = tMean + ( kFact * tTrms );
+  return status;
+}
+
+
+int DTTtrig::get( const DTSuperLayerId& id,
+                  float&  tTrig,
+                  DTTimeUnits::type unit ) const {
+  return get( id.wheel(),
+              id.station(),
+              id.sector(),
+              id.superLayer(), 0, 0,
+              tTrig, unit );
+}
+
+
+int DTTtrig::get( const DetId& id,
+                  float&  tTrig,
+                  DTTimeUnits::type unit ) const {
+  DTWireId wireId( id.rawId() );
+  return get( wireId.wheel(),
+              wireId.station(),
+              wireId.sector(),
+              wireId.superLayer(),
+              wireId.layer(),
+              wireId.wire(),
+              tTrig, unit );
 }
 
 
