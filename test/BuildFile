@@ -53,3 +53,6 @@
 <library file=stubs/DTConfigWrite.cc name=DTConfigWrite>
         <flags EDM_PLUGIN=1>
 </library>
+<library file=stubs/DTConfig1Dump.cc name=DTConfig1Dump>
+        <flags EDM_PLUGIN=1>
+</library>
