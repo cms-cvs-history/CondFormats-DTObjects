@@ -1,20 +1,3 @@
-/* Condition Objects
- * DTReadOutMapping
- * DTT0
- * DTRangeT0
- * DTTtrig
- * DTMtime
- * DTStatusFlag
- * DTDeadFlag
- * DTPerformance
- * DTLVStatus
- * DTHVStatus
- * DTCCBConfig
- * DTTPGParameters
- */
-
-#include "CondFormats/Common/interface/PayloadWrapper.h"
-
 #include "CondFormats/DTObjects/interface/DTReadOutMapping.h"
 #include "CondFormats/DTObjects/interface/DTT0.h"
 #include "CondFormats/DTObjects/interface/DTTtrig.h"
@@ -81,34 +64,3 @@ namespace {
 }
 
 
-
-// wrapper declarations
-namespace {
-   struct wrappers {
-      pool::Ptr<DTReadOutMapping >          pMap;
-      cond::DataWrapper<DTReadOutMapping > dwMap;
-      pool::Ptr<DTT0 >                     pT0;
-      cond::DataWrapper<DTT0 >            dwT0;
-      pool::Ptr<DTRangeT0 >                pRangeT0;
-      cond::DataWrapper<DTRangeT0 >       dwRangeT0;
-      pool::Ptr<DTTtrig >                  pTtrig;
-      cond::DataWrapper<DTTtrig >         dwTtrig;
-      pool::Ptr<DTMtime >                  pMTime;
-      cond::DataWrapper<DTMtime >         dwMTime;
-      pool::Ptr<DTStatusFlag >             pStatusFlag;
-      cond::DataWrapper<DTStatusFlag >    dwStatusFlag;
-      pool::Ptr<DTDeadFlag >               pDeadFlag;
-      cond::DataWrapper<DTDeadFlag >      dwDeadFlag;
-      pool::Ptr<DTPerformance >            pPerformance;
-      cond::DataWrapper<DTPerformance >   dwPerformance;
-      pool::Ptr<DTCCBConfig >              pCCBConfig;
-      cond::DataWrapper<DTCCBConfig >     dwCCBConfig;
-      pool::Ptr<DTLVStatus >               pLVStatus;
-      cond::DataWrapper<DTLVStatus >      dwLVStatus;
-      pool::Ptr<DTHVStatus >               pHVStatus;
-      cond::DataWrapper<DTHVStatus >      dwHVStatus;
-      pool::Ptr<DTTPGParameters >          pTPGParameter;
-      cond::DataWrapper<DTTPGParameters > dwTPGParameter;
-
-   };
-}

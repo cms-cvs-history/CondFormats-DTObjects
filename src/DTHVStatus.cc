@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2008/11/20 12:00:00 $
- *  $Revision: 1.1 $
+ *  $Date: 2009/03/26 18:36:31 $
+ *  $Revision: 1.1.2.2 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -16,9 +16,9 @@
 // Collaborating Class Headers --
 //-------------------------------
 #include "CondFormats/DTObjects/interface/DTDataBuffer.h"
-#include "DataFormats/MuonDetId/interface/DTWireId.h"
+//#include "DataFormats/MuonDetId/interface/DTWireId.h"
 #include "DataFormats/MuonDetId/interface/DTLayerId.h"
-#include "DataFormats/MuonDetId/interface/DTChamberId.h"
+//#include "DataFormats/MuonDetId/interface/DTChamberId.h"
 
 //---------------
 // C++ Headers --
@@ -132,6 +132,23 @@ int DTHVStatus::get( int   wheelId,
 }
 
 
+int DTHVStatus::get( const DTLayerId& id,
+                     int    partId,
+                     int&    fCell,
+                     int&    lCell,
+                     int&    flagA,
+                     int&    flagC,
+                     int&    flagS ) const {
+  return get( id.wheel(),
+              id.station(),
+              id.sector(),
+              id.superLayer(),
+              id.layer(),
+              partId,
+              fCell, lCell, flagA, flagC, flagS );
+}
+
+
 //int DTHVStatus::offChannelsNumber( const DTChamberId& id ) const {
 //  return 0;
 //}
@@ -151,6 +168,7 @@ std::string& DTHVStatus::version() {
 void DTHVStatus::clear() {
   DTDataBuffer<int,int>::dropBuffer( mapName() );
   dataList.clear();
+  dataList.reserve( 10 );
   return;
 }
 
@@ -218,6 +236,173 @@ int DTHVStatus::set( int   wheelId,
 
   return 99;
 
+}
+
+
+int DTHVStatus::set( const DTLayerId& id,
+                     int    partId,
+                     int     fCell,
+                     int     lCell,
+                     int     flagA,
+                     int     flagC,
+                     int     flagS ) {
+  return set( id.wheel(),
+              id.station(),
+              id.sector(),
+              id.superLayer(),
+              id.layer(),
+              partId,
+              fCell, lCell, flagA, flagC, flagS );
+}
+
+
+int DTHVStatus::setFlagA( int   wheelId,
+                          int stationId,
+                          int  sectorId,
+                          int      slId,
+                          int   layerId,
+                          int    partId,
+                          int      flag ) {
+  int fCell;
+  int lCell;
+  int flagA;
+  int flagC;
+  int flagS;
+  get(   wheelId,
+       stationId,
+        sectorId,
+            slId,
+         layerId,
+          partId,
+           fCell,
+           lCell,
+           flagA,
+           flagC,
+           flagS );
+  return set(   wheelId,
+              stationId,
+               sectorId,
+                   slId,
+                layerId,
+                 partId,
+                  fCell,
+                  lCell,
+                   flag,
+                  flagC,
+                  flagS );
+}
+
+
+int DTHVStatus::setFlagA( const DTLayerId& id,
+                          int    partId,
+                          int      flag ) {
+  return setFlagA( id.wheel(),
+                   id.station(),
+                   id.sector(),
+                   id.superLayer(),
+                   id.layer(),
+                   partId,
+                   flag );
+}
+
+
+int DTHVStatus::setFlagC( int   wheelId,
+                          int stationId,
+                          int  sectorId,
+                          int      slId,
+                          int   layerId,
+                          int    partId,
+                          int      flag ) {
+  int fCell;
+  int lCell;
+  int flagA;
+  int flagC;
+  int flagS;
+  get(   wheelId,
+       stationId,
+        sectorId,
+            slId,
+         layerId,
+          partId,
+           fCell,
+           lCell,
+           flagA,
+           flagC,
+           flagS );
+  return set(   wheelId,
+              stationId,
+               sectorId,
+               slId,
+                layerId,
+                 partId,
+                  fCell,
+                  lCell,
+                  flagA,
+                   flag,
+                  flagS );
+}
+
+
+int DTHVStatus::setFlagC( const DTLayerId& id,
+                          int    partId,
+                          int      flag ) {
+  return setFlagC( id.wheel(),
+                   id.station(),
+                   id.sector(),
+                   id.superLayer(),
+                   id.layer(),
+                   partId,
+                   flag );
+}
+
+
+int DTHVStatus::setFlagS( int   wheelId,
+                          int stationId,
+                          int  sectorId,
+                          int      slId,
+                          int   layerId,
+                          int    partId,
+                          int      flag ) {
+  int fCell;
+  int lCell;
+  int flagA;
+  int flagC;
+  int flagS;
+  get(   wheelId,
+       stationId,
+        sectorId,
+            slId,
+         layerId,
+          partId,
+           fCell,
+           lCell,
+           flagA,
+           flagC,
+           flagS );
+  return set(   wheelId,
+              stationId,
+               sectorId,
+                   slId,
+                layerId,
+                 partId,
+                  fCell,
+                  lCell,
+                  flagA,
+                  flagC,
+                   flag );
+}
+
+
+int DTHVStatus::setFlagS( const DTLayerId& id,
+                          int    partId,
+                          int      flag ) {
+  return setFlagS( id.wheel(),
+                   id.station(),
+                   id.sector(),
+                   id.superLayer(),
+                   id.layer(),
+                   partId,
+                   flag );
 }
 
 
