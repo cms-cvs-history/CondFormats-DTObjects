@@ -6,8 +6,8 @@
  *       Class to hold high voltage status
  *             ( half layer by half layer )
  *
- *  $Date: 2008/11/20 12:00:00 $
- *  $Revision: 1.1 $
+ *  $Date: 2009/03/26 18:36:30 $
+ *  $Revision: 1.1.2.2 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -20,8 +20,8 @@
 //------------------------------------
 // Collaborating Class Declarations --
 //------------------------------------
-class DTWireId;
-class DTChamberId;
+//class DTWireId;
+//class DTChamberId;
 class DTLayerId;
 
 //---------------
@@ -94,6 +94,13 @@ class DTHVStatus {
            int&    flagA,
            int&    flagC,
            int&    flagS ) const;
+  int get( const DTLayerId& id,
+           int    partId,
+           int&    fCell,
+           int&    lCell,
+           int&    flagA,
+           int&    flagC,
+           int&    flagS ) const;
 //  int offChannelsNumber( const DTChamberId& id ) const; 
   /// access version
   const
@@ -114,6 +121,43 @@ class DTHVStatus {
            int     flagA,
            int     flagC,
            int     flagS );
+  int set( const DTLayerId& id,
+           int    partId,
+           int     fCell,
+           int     lCell,
+           int     flagA,
+           int     flagC,
+           int     flagS );
+  int setFlagA( int   wheelId,
+                int stationId,
+                int  sectorId,
+                int      slId,
+                int   layerId,
+                int    partId,
+                int      flag );
+  int setFlagA( const DTLayerId& id,
+                int    partId,
+                int      flag );
+  int setFlagC( int   wheelId,
+                int stationId,
+                int  sectorId,
+                int      slId,
+                int   layerId,
+                int    partId,
+                int      flag );
+  int setFlagC( const DTLayerId& id,
+                int    partId,
+                int      flag );
+  int setFlagS( int   wheelId,
+                int stationId,
+                int  sectorId,
+                int      slId,
+                int   layerId,
+                int    partId,
+                int      flag );
+  int setFlagS( const DTLayerId& id,
+                int    partId,
+                int      flag );
 
   /// Access methods to data
   typedef std::vector< std::pair<DTHVStatusId,
