@@ -20,9 +20,9 @@
 //------------------------------------
 // Collaborating Class Declarations --
 //------------------------------------
-//class DTWireId;
-//class DTChamberId;
+class DTWireId;
 class DTLayerId;
+class DTChamberId;
 
 //---------------
 // C++ Headers --
@@ -101,7 +101,12 @@ class DTHVStatus {
            int&    flagA,
            int&    flagC,
            int&    flagS ) const;
-//  int offChannelsNumber( const DTChamberId& id ) const; 
+  int get( const DTWireId& id,
+           int&         flagA,
+           int&         flagC,
+           int&         flagS ) const;
+  int offChannelsNumber() const; 
+  int offChannelsNumber( const DTChamberId& id ) const; 
   /// access version
   const
   std::string& version() const;

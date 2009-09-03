@@ -16,9 +16,9 @@
 // Collaborating Class Headers --
 //-------------------------------
 #include "CondFormats/DTObjects/interface/DTDataBuffer.h"
-//#include "DataFormats/MuonDetId/interface/DTWireId.h"
+#include "DataFormats/MuonDetId/interface/DTWireId.h"
 #include "DataFormats/MuonDetId/interface/DTLayerId.h"
-//#include "DataFormats/MuonDetId/interface/DTChamberId.h"
+#include "DataFormats/MuonDetId/interface/DTChamberId.h"
 
 //---------------
 // C++ Headers --
@@ -149,9 +149,71 @@ int DTHVStatus::get( const DTLayerId& id,
 }
 
 
-//int DTHVStatus::offChannelsNumber( const DTChamberId& id ) const {
-//  return 0;
-//}
+int DTHVStatus::get( const DTWireId& id,
+                      int&         flagA,
+                      int&         flagC,
+                      int&         flagS ) const {
+  flagA = flagC = flagS = 0;
+  int iCell = id.wire();
+  int fCell;
+  int lCell;
+  int
+  fCheck = get( id.wheel(),
+                id.station(),
+                id.sector(),
+                id.superLayer(),
+                id.layer(),
+                0,     fCell, lCell,
+                flagA, flagC, flagS );
+  if ( ( fCheck == 0 ) &&
+       ( fCell <= iCell ) &&
+       ( lCell >= iCell ) ) return 0;
+  fCheck = get( id.wheel(),
+                id.station(),
+                id.sector(),
+                id.superLayer(),
+                id.layer(),
+                1,     fCell, lCell,
+                flagA, flagC, flagS );
+  if ( ( fCheck == 0 ) &&
+       ( fCell <= iCell ) &&
+       ( lCell >= iCell ) ) return 0;
+  flagA = flagC = flagS = 0;
+  return 1;
+}
+
+
+int DTHVStatus::offChannelsNumber() const {
+  int offNum = 0;
+  DTHVStatus::const_iterator iter = begin();
+  DTHVStatus::const_iterator iend = end();
+  while ( iter != iend ) {
+    const std::pair<DTHVStatusId,DTHVStatusData>& entry = *iter++;
+    DTHVStatusId   hvId = entry.first;
+    DTHVStatusData data = entry.second;
+    if (   data.flagA || data.flagC || data.flagS   )
+           offNum += ( 1 + data.lCell - data.fCell );
+  }
+  return offNum;
+}
+
+
+int DTHVStatus::offChannelsNumber( const DTChamberId& id ) const {
+  int offNum = 0;
+  DTHVStatus::const_iterator iter = begin();
+  DTHVStatus::const_iterator iend = end();
+  while ( iter != iend ) {
+    const std::pair<DTHVStatusId,DTHVStatusData>& entry = *iter++;
+    DTHVStatusId   hvId = entry.first;
+    DTHVStatusData data = entry.second;
+    if ( ( hvId.  wheelId == id.  wheel() ) &&
+         ( hvId.stationId == id.station() ) &&
+         ( hvId. sectorId == id. sector() ) &&
+         ( data.flagA || data.flagC || data.flagS ) )
+           offNum += ( 1 + data.lCell - data.fCell );
+  }
+  return offNum;
+}
 
 
 const
