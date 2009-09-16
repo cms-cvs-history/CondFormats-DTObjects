@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2009/03/26 18:36:31 $
- *  $Revision: 1.1.2.2 $
+ *  $Date: 2009/09/03 14:09:01 $
+ *  $Revision: 1.1.6.2 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -191,8 +191,11 @@ int DTHVStatus::offChannelsNumber() const {
     const std::pair<DTHVStatusId,DTHVStatusData>& entry = *iter++;
     DTHVStatusId   hvId = entry.first;
     DTHVStatusData data = entry.second;
-    if (   data.flagA || data.flagC || data.flagS   )
-           offNum += ( 1 + data.lCell - data.fCell );
+    int offA = data.flagA & 1;
+    int offC = data.flagC & 1;
+    int offS = data.flagS & 1;
+    if ( offA || offC || offS )
+         offNum += ( 1 + data.lCell - data.fCell );
   }
   return offNum;
 }
@@ -206,11 +209,47 @@ int DTHVStatus::offChannelsNumber( const DTChamberId& id ) const {
     const std::pair<DTHVStatusId,DTHVStatusData>& entry = *iter++;
     DTHVStatusId   hvId = entry.first;
     DTHVStatusData data = entry.second;
-    if ( ( hvId.  wheelId == id.  wheel() ) &&
-         ( hvId.stationId == id.station() ) &&
-         ( hvId. sectorId == id. sector() ) &&
-         ( data.flagA || data.flagC || data.flagS ) )
-           offNum += ( 1 + data.lCell - data.fCell );
+    if ( hvId.  wheelId != id.  wheel() ) continue;
+    if ( hvId.stationId != id.station() ) continue;
+    if ( hvId. sectorId != id. sector() ) continue;
+    int offA = data.flagA & 1;
+    int offC = data.flagC & 1;
+    int offS = data.flagS & 1;
+    if ( offA || offC || offS )
+         offNum += ( 1 + data.lCell - data.fCell );
+  }
+  return offNum;
+}
+
+
+int DTHVStatus::badChannelsNumber() const {
+  int offNum = 0;
+  DTHVStatus::const_iterator iter = begin();
+  DTHVStatus::const_iterator iend = end();
+  while ( iter != iend ) {
+    const std::pair<DTHVStatusId,DTHVStatusData>& entry = *iter++;
+    DTHVStatusId   hvId = entry.first;
+    DTHVStatusData data = entry.second;
+    if ( data.flagA || data.flagC || data.flagS )
+         offNum += ( 1 + data.lCell - data.fCell );
+  }
+  return offNum;
+}
+
+
+int DTHVStatus::badChannelsNumber( const DTChamberId& id ) const {
+  int offNum = 0;
+  DTHVStatus::const_iterator iter = begin();
+  DTHVStatus::const_iterator iend = end();
+  while ( iter != iend ) {
+    const std::pair<DTHVStatusId,DTHVStatusData>& entry = *iter++;
+    DTHVStatusId   hvId = entry.first;
+    DTHVStatusData data = entry.second;
+    if ( hvId.  wheelId != id.  wheel() ) continue;
+    if ( hvId.stationId != id.station() ) continue;
+    if ( hvId. sectorId != id. sector() ) continue;
+    if ( data.flagA || data.flagC || data.flagS )
+         offNum += ( 1 + data.lCell - data.fCell );
   }
   return offNum;
 }

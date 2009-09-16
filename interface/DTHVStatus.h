@@ -6,8 +6,8 @@
  *       Class to hold high voltage status
  *             ( half layer by half layer )
  *
- *  $Date: 2009/03/26 18:36:30 $
- *  $Revision: 1.1.2.2 $
+ *  $Date: 2009/09/03 14:09:00 $
+ *  $Revision: 1.1.6.2 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -107,6 +107,8 @@ class DTHVStatus {
            int&         flagS ) const;
   int offChannelsNumber() const; 
   int offChannelsNumber( const DTChamberId& id ) const; 
+  int badChannelsNumber() const; 
+  int badChannelsNumber( const DTChamberId& id ) const; 
   /// access version
   const
   std::string& version() const;
