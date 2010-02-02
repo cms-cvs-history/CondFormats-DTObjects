@@ -47,6 +47,7 @@ namespace edmtest {
 
   DTConfig1Dump::~DTConfig1Dump() {
     DTConfig1Handler::remove( session );
+//    delete ri;
     session->disconnect();
     delete session;
   }
