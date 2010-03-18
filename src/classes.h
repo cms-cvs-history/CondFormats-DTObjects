@@ -28,6 +28,7 @@
 #include "CondFormats/DTObjects/interface/DTCCBConfig.h"
 #include "CondFormats/DTObjects/interface/DTConfigList.h"
 #include "CondFormats/DTObjects/interface/DTConfigData.h"
+#include "CondFormats/DTObjects/interface/DTKeyedConfig.h"
 #include "CondFormats/DTObjects/interface/DTTPGParameters.h"
 
 namespace {
