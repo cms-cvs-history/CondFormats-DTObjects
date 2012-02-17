@@ -1,8 +1,8 @@
 /*
  *  See header file for a description of this class.
  *
- *  $Date: 2010/05/06 14:41:53 $
- *  $Revision: 1.21 $
+ *  $Date: 2012/02/07 18:35:00 $
+ *  $Revision: 1.21.2.1 $
  *  \author Paolo Ronchese INFN Padova
  *
  */
@@ -88,6 +88,10 @@ int DTT0::get( int   wheelId,
 
   t0mean = data.t0mean;
   t0rms  = data.t0rms;
+  if ( unit == DTTimeUnits::ns ) {
+    t0mean *= nsPerCount;
+    t0rms  *= nsPerCount;
+  }
   return 0;
 
 }
@@ -170,6 +174,11 @@ int DTT0::set( const DTWireId& id,
                float t0mean,
                float t0rms,
                DTTimeUnits::type unit ) {
+
+  if ( unit == DTTimeUnits::ns ) {
+    t0mean /= nsPerCount;
+    t0rms  /= nsPerCount;
+  }
 
   int seqNum = DTSequentialCellNumber::id( id.wheel(),
                                            id.station(),
